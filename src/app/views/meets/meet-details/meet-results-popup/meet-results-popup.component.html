@@ -1,0 +1,28 @@
+<h1><b>Results</b></h1>
+<mat-card-content *ngIf="resultsReady">
+  <div class="full-height" fxLayout="row wrap">
+    <div fxFlex="100" class="pr-1">
+        <h2 class="mt-1"><b>Upload Results File</b></h2>
+        <input class="mt-1" type="file" ng2FileSelect [uploader]="uploader" />
+    </div>
+    <div fxflex="100">
+      <a mat-button [href]="[data.meet.resultsDocumentUrl]" class="mt-1">View Results File</a>
+    </div>
+  </div>
+</mat-card-content>
+<mat-card-actions *ngIf="resultsReady">
+  <div fxFlex="100" class="mt-1">
+    <button mat-button (click)="upload()" style="margin-top: 10px;">Upload</button>
+    <span fxFlex></span>
+    <button mat-button (click)="dialogRef.close(false)">Cancel</button>
+  </div>
+</mat-card-actions>
+<div *ngIf="!resultsReady" class="spinner-wrapper" fxLayoutAlign="center center">
+  <mat-progress-spinner
+    class="example-margin"
+    [color]="warn"
+    [mode]="'indeterminate'"
+    [value]="75"
+  >
+  </mat-progress-spinner>
+</div>

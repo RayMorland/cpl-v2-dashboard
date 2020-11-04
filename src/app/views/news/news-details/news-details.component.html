@@ -1,0 +1,70 @@
+<div
+  fxLayout="column"
+  style="padding: 10px"
+  fxLayoutGap="10px"
+  *ngIf="newsReady"
+>
+  <div
+    fxLayout="row"
+    class="full-width"
+    fxLayout.lt-sm="column"
+    [@animate]="{
+      value: '*',
+      params: { delay: 100 + 'ms', y: '50px' }
+    }"
+    style="padding: 10px 10px 0 10px"
+  >
+    <button mat-button [routerLink]="['/news']">
+      <mat-icon>arrow_back</mat-icon> Back to News List
+    </button>
+    <span fxFlex="20px"></span>
+    <button
+      mat-button
+      color="primary"
+      [routerLink]="['/news/' + news._id + '/edit']"
+    >
+      <mat-icon>edit</mat-icon> Edit Article
+    </button>
+  </div>
+  <div class="full-width" fxLayout="row wrap">
+    <div
+      [@animate]="{
+        value: '*',
+        params: { delay: 150 + 'ms', y: '50px' }
+      }"
+      fxFlex="100"
+      style="padding: 10px 10px 0px 10px"
+    >
+      <mat-card>
+        <mat-card-title><h1>{{ news.title }}</h1></mat-card-title>
+        <mat-card-content>
+          <h3>{{ news.creationDate | date:'longDate' }}</h3>
+          <h2>{{ news.subtitle }}</h2>
+          <p>{{ news.description }}</p>
+          <div [innerHtml]="news.content"></div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+  <div class="full-width" fxLayout="row wrap">
+    <div
+      fxFlex="100"
+      fxFlex.gt-sm="100"
+      fxLayout="column"
+      [@animate]="{
+        value: '*',
+        params: { delay: 200 + 'ms', y: '50px' }
+      }"
+      style="padding: 10px 10px 10px 10px"
+    >
+      <mat-card class="">
+        <mat-card-title><h1>News Image</h1></mat-card-title>
+        <mat-card-content>
+          <div fxLayout="row" class="mt-1 mb-1">
+            <img [src]="['' + news.imagePath + '']" alt="" width="100%">
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,32 @@
+.user-card:hover {
+    cursor: pointer;
+    -webkit-box-shadow: 0px 0px 50px -9px rgba(191,191,191,1);
+    -moz-box-shadow: 0px 0px 50px -9px rgb(191, 191, 191);
+    box-shadow: 0px 0px 50px -9px rgba(191, 191, 191, 0.61) !important;
+    transform: scale(1.005);
+    transition: all .5s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.user-card:focus {
+    outline: none;
+}
+
+.mat-divider {
+    position: relative !important;
+    margin-bottom: 20px !important;
+}
+
+.member-details {
+    padding: 10px;
+}
+
+.toolbar-avatar.logo {
+    width: auto !important;
+    height: 48px !important;
+}
+
+.toolbar-avatar > img {
+    width: auto !important;
+    height: 48px !important;
+    border-radius: 0% !important;
+}

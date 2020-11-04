@@ -1,0 +1,329 @@
+<div fxLayout="column" fxLayoutGap="20px" style="padding: 10px">
+  <div fxLayout="row wrap" class="full-width cpl-list">
+    <!-- Button Row -->
+    <div
+      fxLayout="row"
+      fxLayout.lt-sm="column"
+      class=""
+      style="padding: 10px"
+      [@animate]="{ value: '*', params: { scale: '.9', delay: '300ms' } }"
+    >
+      <button mat-button color="primary" routerLink="/meets/new">
+        <mat-icon>add</mat-icon> New Meet
+      </button>
+      <span fxFlex="10px"></span>
+      <!-- <button mat-button color="primary" routerLink="/meets/requests">
+        <mat-icon>list</mat-icon> Meet Requests
+      </button> -->
+    </div>
+    <!-- Search Form -->
+    <div
+      [@animate]="{ value: '*', params: { y: '50px', delay: '100ms' } }"
+      fxLayout="row wrap"
+      fxLayout.lt-sm="column"
+      fxFlex="100"
+    >
+      <form
+        fxFlex
+        fxLayout="row wrap"
+        class="sort-form"
+        [formGroup]="filterForm"
+      >
+        <div fxLayout="row" fxFlex="100" fxFlex.gt-sm="33.3">
+          <mat-form-field
+            fxFlex
+            style="margin: 8px; padding: 8px; background-color: white"
+          >
+            <input
+              matInput
+              name="searchMeet"
+              placeholder="Search Meets"
+              formControlName="searchString"
+            />
+          </mat-form-field>
+        </div>
+        <div fxLayout="row wrap" fxFlex="100" fxFlex.gt-sm="33.3">
+          <div fxLayout="row" fxFlex="100" fxFlex.gt-sm="50">
+            <mat-form-field
+              fxFlex="100"
+              style="margin: 8px; padding: 8px; background-color: white"
+            >
+              <mat-label>Meet Status</mat-label>
+              <mat-select formControlName="status">
+                <mat-option [value]="null"> All </mat-option>
+                <mat-option [value]="'created'"> Created </mat-option>
+                <mat-option [value]="'active'"> Active </mat-option>
+                <mat-option [value]="'review'"> Under Review </mat-option>
+                <mat-option [value]="'accepted'"> Accepted </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div fxFlex="100" fxFlex.gt-sm="50">
+            <mat-form-field
+              fxFlex
+              style="margin: 8px; padding: 8px; background-color: white"
+            >
+              <mat-label>Upcoming</mat-label>
+              <mat-select formControlName="completed">
+                <mat-option [value]="null"> All </mat-option>
+                <mat-option [value]="'upcoming'"> Upcoming </mat-option>
+                <mat-option [value]="'past'"> Past </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+        <div fxLayout="row wrap" fxFlex="100" fxFlex.gt-sm="33.3">
+          <div fxFlex="100" fxFlex.gt-sm="50">
+            <mat-form-field
+              fxFlex
+              style="margin: 8px; padding: 8px; background-color: white"
+            >
+              <mat-label>Province</mat-label>
+              <mat-select formControlName="province">
+                <mat-option [value]="null"> All </mat-option>
+                <mat-option
+                  *ngFor="let province of platformService.provinces"
+                  [value]="province"
+                >
+                  {{ province }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div fxFlex="100" fxFlex.gt-sm="50">
+            <mat-form-field
+              fxFlex
+              style="margin: 8px; padding: 8px; background-color: white"
+            >
+              <mat-label>Year</mat-label>
+              <mat-select formControlName="year">
+                <mat-option [value]="null"> All </mat-option>
+                <mat-option *ngFor="let year of years" [value]="year">
+                  {{ year }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+      </form>
+    </div>
+    <!-- Meets container -->
+    <div *ngIf="meetsReady" class="full-width" fxLayout="row wrap">
+      <!-- Meet Card -->
+      <div
+        fxFlex="100"
+        fxFlex.gt-sm="33.3"
+        fxFlex.sm="50"
+        style="padding: 10px 10px 0px 10px"
+        *ngFor="
+          let meet of filteredMeets
+            | paginate: { itemsPerPage: 6, currentPage: currentPage };
+          let i = index
+        "
+        [@animate]="{
+          value: '*',
+          params: { delay: i * 100 + 'ms', y: '50px' }
+        }"
+      >
+        <mat-card
+          [routerLink]="['/meets/', meet._id]"
+          fxLayout="column"
+          class="meet-card"
+        >
+          <mat-card-header>
+            <mat-card-title> </mat-card-title>
+          </mat-card-header>
+          <mat-card-content fxFlex fxLayout="column" style="padding-top: 275px">
+            <div
+              class="featured-img"
+              [ngStyle]="{
+                'background-image':
+                  'url(https://images.unsplash.com/photo-1517344687790-7338f238f7f5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1055&q=80)'
+              }"
+            >
+              <div
+                fxLayout="row"
+                fxLayoutAlign="center center"
+                *ngIf="!meet.registrationClosed && !meet.completed"
+                class="filter"
+              >
+                <h1
+                  style="
+                    color: white;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                  "
+                ></h1>
+              </div>
+              <div
+                fxLayout="row"
+                fxLayoutAlign="center center"
+                *ngIf="
+                  meet.registrationClosed &&
+                  meet.completed &&
+                  meet.status == 'active'
+                "
+                class="filter"
+              >
+                <h1
+                  style="
+                    color: white;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                  "
+                >
+                  Meet Completed
+                </h1>
+              </div>
+              <div
+                fxLayout="row"
+                fxLayoutAlign="center center"
+                *ngIf="
+                  meet.registrationClosed &&
+                  !meet.completed &&
+                  meet.status == 'active'
+                "
+                class="filter"
+              >
+                <h1
+                  style="
+                    color: white;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                  "
+                >
+                  Registration Closed
+                </h1>
+              </div>
+            </div>
+            <div fxLayout="column" fxFlex="100" class="info-wrap p-0">
+              <div fxLayout="column" fxFlex="100" class="main-info">
+                <div
+                  fxLayout="row wrap"
+                  fxLayoutAlign="space-between start"
+                  style="width: 100%; margin-bottom: 30px"
+                >
+                  <div>
+                    <h2
+                      class="title full-width"
+                      [routerLink]="['/meets/', meet._id]"
+                    >
+                      <b>{{ meet.title }}</b>
+                    </h2>
+                    <h3 class="text-muted p-line full-width">
+                      {{ meet?.subtitle }}
+                    </h3>
+                  </div>
+                  <span class="mt-1 mb-1" fxFlex></span>
+                  <div align="right">
+                    <h2>
+                      <b>{{ meet.dates[0]?.startTime | date: "MMM dd" }}</b>
+                    </h2>
+                    <h3 class="text-muted p-line full-width">
+                      {{ (meet?.dates)[0]?.startTime | date: "yyyy" }}
+                    </h3>
+                  </div>
+                </div>
+                <div fxLayout="row wrap" style="margin-bottom: 20px">
+                  <h2>
+                    <b
+                      >{{ meet.venue.location.address.city }},
+                      {{ meet.venue.location.address.province }}</b
+                    >
+                  </h2>
+                  <span fxFlex></span>
+                  <h3 class="text-muted">{{ meet.venue.location.name }}</h3>
+                </div>
+                <span fxFlex></span>
+                <mat-chip-list
+                  *ngIf="meet.tags > 0"
+                  aria-label="Fish selection"
+                >
+                  <mat-chip *ngFor="let t of meet.tags">{{ t }}</mat-chip>
+                </mat-chip-list>
+              </div>
+            </div>
+          </mat-card-content>
+          <mat-card-actions>
+            <div class="actions">
+              <div class="price-rating">
+                <div class="price">
+                  <span>{{ product?.price?.sale | currency: "USD" }}</span>
+                  <del class="text-muted">{{
+                    meet?.price?.previous | currency: "CAD"
+                  }}</del>
+                </div>
+              </div>
+              <div class="add-to-cart">
+                <div>
+                  <h2>
+                    <b>Status:</b>
+                    <span *ngIf="meet.status === 'active'" style="color: green">
+                      {{ meet.status }}</span
+                    >
+                    <span
+                      *ngIf="meet.status === 'created'"
+                      style="color: goldenrod"
+                    >
+                      {{ meet.status }}</span
+                    >
+                    <span *ngIf="meet.status === 'review'" style="color: blue">
+                      {{ meet.status }}</span
+                    >
+                    <span
+                      *ngIf="meet.status === 'pending'"
+                      style="color: olive"
+                    >
+                      {{ meet.status }}</span
+                    >
+                    <span
+                      *ngIf="meet.status === 'accepted'"
+                      style="color: orangered"
+                    >
+                      {{ meet.status }}</span
+                    >
+                  </h2>
+                </div>
+                <span fxFlex></span>
+                <button
+                  *ngIf="
+                    !meet.completed &&
+                    !meetRegistrations.includes(meet._id) &&
+                    meet.status === 'created'
+                  "
+                  mat-button
+                  color="primary"
+                  style="margin-right: 0 !important"
+                  [routerLink]="['/meets/' + meet._id + '/edit']"
+                >
+                  <mat-icon>edit</mat-icon> Edit
+                </button>
+                <button
+                  *ngIf="meet.completed"
+                  mat-button
+                  color="primary"
+                  style="margin-right: 0 !important"
+                  [routerLink]="['/meets/' + meet._id + '/results/']"
+                >
+                  Results
+                </button>
+              </div>
+            </div>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+
+      <div
+        fxLayout="row"
+        fxFlex="100"
+        fxLayoutAlign="center center"
+        class="products-pagination"
+      >
+        <pagination-controls
+          (pageChange)="currentPage = $event"
+        ></pagination-controls>
+      </div>
+    </div>
+    <!-- End Meets container -->
+  </div>
+</div>

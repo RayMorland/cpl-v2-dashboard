@@ -1,0 +1,798 @@
+<!-- Add popup to add registration and table to sort registrants -->
+<!-- Active: Meet is active and can be viewed -->
+<div
+  *ngIf="meetReady"
+  fxLayout="column"
+  fxLayoutGap="20px"
+  style="padding: 20px"
+>
+  <!-- Button Row -->
+  <div
+    [@animate]="{ value: '*', params: { y: '50px', delay: '150ms' } }"
+    fxLayout="row"
+    fxLayout.lt-sm="column"
+    class="top-toolbar mb-0"
+  >
+    <button mat-button [routerLink]="['/meets']">
+      <mat-icon>arrow_back</mat-icon> Back to Meets
+    </button>
+    <span fxFlex="20px"></span>
+    <button
+      mat-button
+      color="primary"
+      [routerLink]="['/meets/' + meet._id + '/edit']"
+    >
+      <mat-icon>edit</mat-icon> Edit Meet
+    </button>
+    <span fxFlex></span>
+    <button
+      *ngIf="meet.registrationClosed && meet.status === 'active'"
+      mat-button
+      color="green"
+      (click)="openRegistration()"
+    >
+      <mat-icon>check_circle</mat-icon> Open Registration
+    </button>
+    <button
+      *ngIf="!meet.registrationClosed && meet.status === 'active'"
+      mat-button
+      color="warn"
+      (click)="closeRegistration()"
+    >
+      <mat-icon>close</mat-icon> Close Registration
+    </button>
+  </div>
+  <div fxLayout="row wrap" class="full-width">
+    <!-- Created: Meet has been created but not submitted. Meet can still be edited -->
+    <div
+      *ngIf="meet.status === 'created'"
+      [@animate]="{ value: '*', params: { y: '50px', delay: '150ms' } }"
+    >
+      <div fxLayout="row wrap">
+        <div fxFlex="100" fxFlex.gt-sm="100" fxLayout="column">
+          <mat-card>
+            <mat-card-title
+              >You need to confirm this meet to make it active</mat-card-title
+            >
+            <mat-card-content>
+              <button mat-button (click)="changeMeetStatus('active')">
+                Confirm Meet
+              </button>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+    </div>
+    <!-- Review: Meet Has Been Submitted and Is Under Review by CPL -->
+    <div
+      *ngIf="meet.status === 'review'"
+      [@animate]="{ value: '*', params: { y: '50px', delay: '150ms' } }"
+    >
+      <div fxLayout="row wrap">
+        <div fxFlex="100" fxFlex.gt-sm="100" fxLayout="column">
+          <mat-card>
+            <mat-card-title>Your meet is under review</mat-card-title>
+          </mat-card>
+        </div>
+      </div>
+    </div>
+    <!-- Pending: Meet Accepted and Payment Needed -->
+    <div
+      *ngIf="meet.status === 'accepted'"
+      [@animate]="{ value: '*', params: { y: '50px', delay: '150ms' } }"
+    >
+      <div fxLayout="row wrap">
+        <div fxFlex="100" fxFlex.gt-sm="100" fxLayout="column">
+          <mat-card>
+            <mat-card-title
+              >Your meet has been accepted! Now you must pay the meet fee to
+              finalize.</mat-card-title
+            >
+            <mat-card-content>
+              <button
+                mat-button
+                [routerLink]="['/meets/' + meet._id + '/payment']"
+              >
+                Pay Fee
+              </button>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Meet Header Section -->
+  <div fxLayout="row wrap" class="full-width" fxLayoutGap="20px">
+    <div fxFlex="100" fxFlex.gt-sm="100" fxLayout="column">
+      <mat-card
+        [@animate]="{ value: '*', params: { y: '50px', delay: '190ms' } }"
+      >
+        <div fxLayout="row wrap">
+          <div fxflex>
+            <h1 *ngIf="meet.title">
+              <b>{{ meet.title }}</b>
+            </h1>
+            <h2 class="text-muted">
+              <b>{{ meet.subtitle }}</b>
+            </h2>
+            <h2>
+              <b>Status: {{ meet.status }}</b>
+            </h2>
+            <div class="mt-1 mb-1">
+              <h3 *ngIf="meet.registrationClosed" style="color: red">
+                <b>Registration is closed</b>
+              </h3>
+              <h3 *ngIf="!meet.registrationClosed" style="color: green">
+                <b>Registration is open</b>
+              </h3>
+            </div>
+            <div>
+              <h3>
+                <b
+                  >Capacity: {{ registrations.length }} / {{ meet.capacity }}</b
+                >
+              </h3>
+            </div>
+          </div>
+        </div>
+        <span fxFlex></span>
+        <div>
+          <h1>
+            <b
+              >{{ meet.dates[0].start | date: "MMM dd" }} -
+              {{ meet.dates[meet.dates.length - 1].end | date: "MMM dd" }}</b
+            >
+          </h1>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+  <!-- Info Section -->
+  <div fxLayout="row wrap" class="full-width" fxLayoutGap="20px">
+    <!-- Meet Info Column -->
+    <div class="" fxFlex="100" fxFlex.gt-sm="50" fxLayout="column" fxLayoutGap="20px">
+      <!-- Meet Information -->
+      <mat-card
+        class=""
+        [@animate]="{ value: '*', params: { y: '50px', delay: '230ms' } }"
+      >
+        <mat-card-title><b>Meet Information</b></mat-card-title>
+        <mat-card-content>
+          <div fxLayout="row wrap">
+            <div class="full-width" style="width: 100%">
+              <p>{{ meet?.description }}</p>
+            </div>
+            <div style="width: 100%">
+              <h3>
+                Hosted By: <b>{{ meet.coordinator.name }}</b>
+              </h3>
+            </div>
+            <div style="width: 100%">
+              <h3>
+                Creation Date: <b>{{ meet.creationDate | date: "medium" }}</b>
+              </h3>
+            </div>
+            <div style="width: 100%">
+              <h3>
+                Registration Opening:
+                <b>{{ meet.releaseDate | date: "medium" }}</b>
+              </h3>
+            </div>
+            <div style="width: 100%">
+              <h3>
+                Registration Closing:
+                <b>{{ meet.registrationClosingDate | date: "medium" }}</b>
+              </h3>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      <!-- Event Information -->
+      <mat-card
+        class=""
+        [@animate]="{ value: '*', params: { y: '50px', delay: '270ms' } }"
+      >
+        <mat-card-title><b>Events</b></mat-card-title>
+        <mat-card-content>
+          <div>
+            <h3>
+              <b>Categories</b>
+            </h3>
+            <h4 *ngFor="let category of meet.eventInfo.categories">
+              {{ category }}
+            </h4>
+          </div>
+          <div>
+            <h3>
+              <b>Lifts</b>
+            </h3>
+            <h4 *ngFor="let event of meet.eventInfo.events">
+              {{ event.type }} - ${{ event.price }}
+            </h4>
+          </div>
+          <div>
+            <h3>
+              <b>Tests</b>
+            </h3>
+            <h4 *ngFor="let test of meet.eventInfo.testing">
+              {{ test.type }} - ${{ test.price }}
+            </h4>
+          </div>
+          <div style="width: 100%">
+            <mat-chip-list aria-label="Fish selection">
+              <mat-chip *ngFor="let t of meet.tags">{{ t }}</mat-chip>
+            </mat-chip-list>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      <!-- Venue Information -->
+      <mat-card
+        class=""
+        [@animate]="{ value: '*', params: { y: '50px', delay: '310ms' } }"
+      >
+        <mat-card-title><b>Venue</b></mat-card-title>
+        <mat-card-content>
+          <div fxLayout="row wrap">
+            <div fxFlex="100">
+              <p>{{ meet?.venue.info }}</p>
+            </div>
+            <div fxFlex="100" class="full-width">
+              <h3>
+                Venue: <b>{{ meet?.venue.location.name }}</b>
+              </h3>
+            </div>
+            <div fxFlex="100" class="full-width">
+              <h3>
+                Address:
+                <b
+                  >{{ meet?.venue.location.address.street }}
+                  {{ meet?.venue.location.address.city }},
+                  {{ meet?.venue.location.address.province }}</b
+                >
+              </h3>
+            </div>
+            <div fxFlex="100">
+              <h3>
+                Website: <a [href]="meet.venue.link">{{ meet.venue.link }}</a>
+              </h3>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      <!-- Weigh In Info -->
+      <mat-card
+        class=""
+        [@animate]="{ value: '*', params: { y: '50px', delay: '350ms' } }"
+      >
+        <mat-card-title><b>Weigh-In Info</b></mat-card-title>
+        <mat-card-content>
+          <div fxLayout="row wrap">
+            <div fxFlex="100">
+              <p>{{ meet?.weighInInfo.info }}</p>
+            </div>
+            <div fxFlex="100" class="full-width">
+              <h3>
+                Start Time:
+                <span style="font-weight: 400">{{ meet?.weighInInfo.times.start | date: "medium" }}</span>
+              </h3>
+            </div>
+            <div fxFlex="100" class="full-width">
+              <h3>
+                End Time:
+                <span style="font-weight: 400">{{ meet?.weighInInfo.times.end | date: "medium" }}</span>
+              </h3>
+            </div>
+            <div fxFlex="100" class="full-width">
+              <h3>
+                Location: <b></b>{{ meet?.weighInInfo.location.name }}
+              </h3>
+            </div>
+            <div fxFlex="100" class="full-width">
+              <h3>
+                Address:
+                <b
+                  >{{ meet?.weighInInfo.location.address.street }}
+                  {{ meet?.weighInInfo.location.address.city }},
+                  {{ meet?.weighInInfo.location.address.province }}</b
+                >
+              </h3>
+            </div>
+            <div fxFlex="100">
+              <h3>
+                Website:
+                <a [href]="meet.weighInInfo.link">{{
+                  meet.weighInInfo.link
+                }}</a>
+              </h3>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      <!-- Accommodation Info -->
+      <mat-card
+        class=""
+        [@animate]="{ value: '*', params: { y: '50px', delay: '390ms' } }"
+      >
+        <mat-card-title><b>Accommodation Info</b></mat-card-title>
+        <mat-card-content>
+          <div fxLayout="row wrap">
+            <div fxFlex="100">
+              <p>{{ meet?.accommodation.info }}</p>
+            </div>
+            <div fxFlex="100" class="full-width">
+              <h3>
+                Accommodation: <b>{{ meet?.accommodation.location.name }}</b>
+              </h3>
+            </div>
+            <div fxFlex="100" class="full-width">
+              <h3>
+                Address:
+                <b>
+                  {{ meet?.accommodation.location.address.street }}
+                  {{ meet?.accommodation.location.address.city }},
+                  {{ meet?.accommodation.location.address.province }}
+                </b>
+              </h3>
+            </div>
+            <div fxFlex="100">
+              <h3>
+                Website:
+                <a [href]="meet.accommodation.link">{{
+                  meet?.accommodation.link
+                }}</a>
+              </h3>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <!-- Images and Map Column -->
+    <div fxFlex="100" fxFlex fxLayout="column" fxLayoutGap="20px">
+      <!-- Meet Images -->
+      <mat-card
+        *ngIf="meet.images.length > 0"
+        class=""
+        [@animate]="{ value: '*', params: { y: '50px', delay: '240ms' } }"
+      >
+        <mat-card-title><b>Meet Images</b></mat-card-title>
+        <mat-card-content>
+          <div fxLayout="row wrap">
+            <div fxFlex="100">
+              <div class="meet-card-poster">
+                <img [src]="selectedImage" alt="" />
+              </div>
+            </div>
+            <div fxFlex="100" style="margin-top: 8px">
+              <div fxLayout="row" fxLayoutGap="14px">
+                <div
+                  *ngFor="let meetImage of meet.images; let i = index"
+                  class="meet-images-small"
+                  fxFlex="25"
+                  [style.backgroundImage]="'url(' + meetImage + ')'"
+                  (click)="changeMeetImage(i)"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      <!-- Venue Location -->
+      <mat-card
+        class="p-0"
+        [@animate]="{ value: '*', params: { y: '50px', delay: '280ms' } }"
+      >
+        <mat-card-title class="m-0">
+          <div class="card-title-text"><b>Venue Location</b></div>
+          <mat-divider></mat-divider>
+        </mat-card-title>
+        <mat-card-content class="p-0">
+          <agm-map
+            *ngIf="mapReady"
+            [ngStyle]="{ height: '400px' }"
+            [zoom]="zoom"
+            [latitude]="mapCenter.lat"
+            [longitude]="mapCenter.lng"
+            [scrollwheel]="false"
+            [gestureHandling]="cooperative"
+          >
+            <agm-marker
+              [latitude]="mapCenter.lat"
+              [longitude]="mapCenter.lng"
+              [label]="'M'"
+            ></agm-marker>
+          </agm-map>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+  <!-- Merchandise Section -->
+  <div
+    fxLayout="row wrap"
+    [@animate]="{ value: '*', params: { y: '50px', delay: '430ms' } }"
+  >
+    <div fxFlex="100" fxFlex.gt-sm="100" fxLayout="column">
+      <mat-card class="">
+        <mat-card-title><b>Merchandise</b></mat-card-title>
+        <mat-card-content class="p-0">
+          <div fxLayout="row" style="width: 100%">
+            <ngx-datatable
+              class="material ml-0 mr-0 full-width"
+              [rows]="meet.merchandise"
+              [columnMode]="'force'"
+              [headerHeight]="50"
+              [footerHeight]="50"
+              [scrollbarH]="true"
+              [limit]="10"
+              [rowHeight]="50"
+            >
+              <ngx-datatable-column name="Item" [flexGrow]="1">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ row?.item }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Description" [flexGrow]="1">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ row?.description }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Price" [flexGrow]="1">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ row?.price }}
+                </ng-template>
+              </ngx-datatable-column>
+            </ngx-datatable>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+  <!-- Registrants Table Card-->
+  <div
+    fxLayout="row wrap"
+    [@animate]="{ value: '*', params: { y: '50px', delay: '470ms' } }"
+  >
+    <div fxFlex="100" fxFlex.gt-sm="100" fxLayout="column">
+      <mat-card class="">
+        <mat-card-title><b>Registrants</b></mat-card-title>
+        <mat-card-content *ngIf="registrantsReady">
+          <div fxLayout="row">
+            <button mat-button (click)="openRegistrationPopUp({}, true)">
+              <mat-icon>add</mat-icon> Add Registrant
+            </button>
+            <span fxFlex="20px"></span>
+            <button mat-button (click)="downloadRegistrationSpreadsheet()">
+              <mat-icon>get_app</mat-icon> Download Registrants Spreadsheet
+            </button>
+          </div>
+          <mat-list role="list">
+            <mat-list-item role="listitem"
+              >Capacity: {{ registrations.length }} /
+              {{ meet.capacity }}</mat-list-item
+            >
+          </mat-list>
+          <div fxLayout="row" style="width: 100%">
+            <ngx-datatable
+              class="material ml-0 mr-0 full-width"
+              [rows]="registrations"
+              [columnMode]="'force'"
+              [headerHeight]="50"
+              [footerHeight]="50"
+              [scrollbarH]="true"
+              [limit]="10"
+              [rowHeight]="50"
+            >
+              <ngx-datatable-column name="Name" [flexGrow]="1">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <a
+                    class="memberName"
+                    [routerLink]="['/members/' + row.memberId]"
+                    >{{ row?.name }}
+                  </a>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="CreationDate" [flexGrow]="1">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ row?.creationDate }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Status" [flexGrow]="1">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ row?.status }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Fees Paid" [flexGrow]="1">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ row?.fees.feesPaid }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Actions" [flexGrow]="1">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <button
+                    mat-icon-button
+                    mat-sm-button
+                    color="primary"
+                    class="mr-1"
+                    (click)="openRegistrationPopUp(row, false)"
+                  >
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button
+                    mat-icon-button
+                    mat-sm-button
+                    color="warn"
+                    (click)="deleteRegistration(row)"
+                  >
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </ng-template>
+              </ngx-datatable-column>
+            </ngx-datatable>
+          </div>
+        </mat-card-content>
+        <div
+          *ngIf="!registrantsReady"
+          class="spinner-wrapper"
+          fxLayoutAlign="center center"
+        >
+          <mat-progress-spinner
+            class="example-margin"
+            [color]="warn"
+            [mode]="'indeterminate'"
+            [value]="75"
+          >
+          </mat-progress-spinner>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+  <!-- Results Card -->
+  <div
+    fxLayout="row wrap"
+    [@animate]="{ value: '*', params: { y: '50px', delay: '510ms' } }"
+  >
+    <div fxFlex="100" fxFlex.gt-sm="100" fxLayout="column">
+      <mat-card>
+        <mat-card-title><b>Results</b></mat-card-title>
+        <mat-card-content fxLayout="column" *ngIf="resultsReady">
+          <!-- <button
+            *ngIf="results.length > 0"
+            mat-button
+            class="mb-05"
+            color="primary"
+            [routerLink]="['/meets/' + meet._id + '/results']"
+          >
+            View Results
+          </button> -->
+          <div class="full-width" fxLayout="row wrap">
+            <div fxLayout="row wrap" fxFlex="100">
+              <div fxFlex="100">
+                <button
+                  mat-button
+                  class="mb-05"
+                  color="primary"
+                  (click)="openResultsUploadPopUp()"
+                >
+                  Upload Results
+                </button>
+                <span fxFlex="20px"></span>
+                <button
+                  mat-button
+                  class="mb-05"
+                  color="primary"
+                  (click)="openResultEditPopUp({}, true)"
+                >
+                  <mat-icon>add</mat-icon> Add Result
+                </button>
+              </div>
+              <div fxFlex="100" class="mt-1 mb-1">
+                <a [href]="[meet.resultsDocumentUrl]" target="_blank"
+                  >Results File: {{ resultsFilename }}</a
+                >
+              </div>
+            </div>
+            <div *ngIf="results.length == 0" fxFlex="100" class="mt-1 mb-1">
+              <h3>No Results</h3>
+            </div>
+          </div>
+          <div class="full-width">
+            <div *ngIf="true" fxLayout="row">
+              <ngx-datatable
+                class="material ml-0 mr-0 full-width"
+                [rows]="results"
+                [columnMode]="ColumnMode.flex"
+                [headerHeight]="50"
+                [footerHeight]="50"
+                [scrollbarH]="true"
+                [limit]="10"
+                [rowHeight]="auto"
+              >
+                <ngx-datatable-column name="Name" [flexGrow]="1">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    <a
+                      class="memberName"
+                      [routerLink]="['/members/' + row.memberId]"
+                      >{{ row?.memberName }}
+                    </a>
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Testing" [flexGrow]="1">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row?.testing }}
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Category" [flexGrow]="1">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row?.category }}
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Divisions" [flexGrow]="1">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div
+                      *ngFor="let division of row?.divisions"
+                      style="height: 25px"
+                    >
+                      {{ division.name }}
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Event" [flexGrow]="1">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div *ngFor="let event of row?.events" style="height: 25px">
+                      {{ event }}
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Lifts" [flexGrow]="1">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div *ngFor="let lift of row?.lifts" style="height: 25px">
+                      {{ lift.liftType }}
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Attempt 1" [flexGrow]="1">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div
+                      *ngFor="let attempt of row?.lifts"
+                      style="height: 25px"
+                      fxLayout="row"
+                      fxLayoutAlign="start center"
+                    >
+                      {{ attempt?.attempt1.weight }}
+                      <span fxFlex="5px"></span>
+                      <mat-icon *ngIf="attempt.attempt1.success">done</mat-icon>
+                      <mat-icon *ngIf="!attempt.attempt1.success"
+                        >close</mat-icon
+                      >
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Attempt 2" [flexGrow]="1">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div
+                      *ngFor="let attempt of row?.lifts"
+                      style="height: 25px"
+                      fxLayout="row"
+                      fxLayoutAlign="start center"
+                    >
+                      <div>
+                        {{ attempt?.attempt2.weight }}
+                        <span fxFlex="5px"></span>
+                        <mat-icon *ngIf="attempt.attempt2.success"
+                          >done</mat-icon
+                        >
+                        <mat-icon *ngIf="!attempt.attempt2.success"
+                          >close</mat-icon
+                        >
+                      </div>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Attempt 3" [flexGrow]="1">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div
+                      *ngFor="let attempt of row?.lifts"
+                      style="height: 25px"
+                      fxLayout="row"
+                      fxLayoutAlign="start center"
+                    >
+                      <div>
+                        {{ attempt?.attempt3.weight }}
+                        <span fxFlex="5px"></span>
+                        <mat-icon *ngIf="attempt.attempt3.success"
+                          >done</mat-icon
+                        >
+                        <mat-icon *ngIf="!attempt.attempt3.success"
+                          >close</mat-icon
+                        >
+                      </div>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Record" [flexGrow]="1">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div *ngFor="let lift of row?.lifts" style="height: 25px">
+                      <div>
+                        <mat-icon
+                          *ngIf="lift?.isRecord"
+                          [ngStyle]="{ color: 'rgb(255, 204,0)' }"
+                          >emoji_events</mat-icon
+                        >
+                      </div>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Total" [flexGrow]="1">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{ row.total }}
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Actions" [flexGrow]="1">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    <button
+                      mat-icon-button
+                      mat-sm-button
+                      color="primary"
+                      class="mr-1"
+                      (click)="openResultEditPopUp(row, false)"
+                    >
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button
+                      mat-icon-button
+                      mat-sm-button
+                      color="warn"
+                      (click)="deleteResult(row)"
+                    >
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </ng-template>
+                </ngx-datatable-column>
+              </ngx-datatable>
+            </div>
+          </div>
+        </mat-card-content>
+        <div
+          *ngIf="!resultsReady"
+          class="spinner-wrapper"
+          fxLayoutAlign="center center"
+        >
+          <mat-progress-spinner
+            class="example-margin"
+            [color]="warn"
+            [mode]="'indeterminate'"
+            [value]="75"
+          >
+          </mat-progress-spinner>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+  <!-- Activation Buttons -->
+  <div
+    fxLayout="row wrap"
+    [@animate]="{ value: '*', params: { y: '50px', delay: '550ms' } }"
+  >
+    <div
+      fxFlex="100"
+      fxFlex.gt-sm="100"
+      fxLayout="row"
+      fxLayoutAlign="center center"
+      style="padding: 20px"
+    >
+      <button
+        *ngIf="meet.status != 'inactive' && meet.status != 'created'"
+        mat-button
+        (click)="changeMeetStatus('inactive')"
+      >
+        <mat-icon>priority_high</mat-icon> Deactivate Meet
+      </button>
+      <button
+        *ngIf="meet.status == 'inactive'"
+        mat-button
+        (click)="changeMeetStatus('active')"
+      >
+        <mat-icon>priority_high</mat-icon> Activate Meet
+      </button>
+    </div>
+  </div>
+</div>

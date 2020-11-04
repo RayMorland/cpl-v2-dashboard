@@ -1,0 +1,580 @@
+<div *ngIf="!loaderOpen">
+  <h2 style="font-size: 30px" class="mb-1">
+    <b>{{ title }}</b>
+  </h2>
+  <mat-card-content>
+    <form [formGroup]="leagueEditForm">
+      <div fxLayout="row wrap" fxLayout.lt-sm="column">
+        <!-- Divisions -->
+        <div
+          *ngIf="title === 'divisions'"
+          fxFlex="100"
+          fxLayout="row wrap"
+          formArrayName="divisions"
+        >
+          <div fxFlex="100">
+            <button mat-button (click)="addDivision()">Add Division</button>
+          </div>
+          <div
+            fxFlex="100"
+            fxLayout="row wrap"
+            *ngFor="
+              let division of leagueEditForm.get('divisions').controls;
+              let i = index
+            "
+            [formGroupName]="i"
+          >
+            <div fxFlex="100" class="pr-1">
+              <div class="pb-1">
+                <mat-form-field class="full-width">
+                  <input
+                    matInput
+                    type="string"
+                    formControlName="name"
+                    placeholder="Division Name"
+                    required
+                  />
+                </mat-form-field>
+              </div>
+            </div>
+            <div fxFlex="100" fxLayout="row wrap" formArrayName="ageClasses">
+              <div fxFlex="100">
+                <button mat-button (click)="addAgeClass(i)">
+                  Add Age Class
+                </button>
+              </div>
+              <div
+                fxFlex="100"
+                fxLayout="row wrap"
+                *ngFor="
+                  let ageClass of division.get('ageClasses').controls;
+                  let j = index
+                "
+                [formGroupName]="j"
+              >
+                <div fxFlex="46" class="pr-1">
+                  <div class="pb-1">
+                    <mat-form-field class="full-width">
+                      <input
+                        matInput
+                        type="string"
+                        formControlName="min"
+                        placeholder="Min Age"
+                        required
+                      />
+                    </mat-form-field>
+                  </div>
+                </div>
+                <div fxFlex="46" class="pr-1">
+                  <div class="pb-1">
+                    <mat-form-field class="full-width">
+                      <input
+                        matInput
+                        type="string"
+                        formControlName="max"
+                        placeholder="Max Age"
+                        required
+                      />
+                    </mat-form-field>
+                  </div>
+                </div>
+                <div fxFlex>
+                  <button
+                    mat-icon-button
+                    type="button"
+                    color="primary"
+                    (click)="removeAgeClass(i, j)"
+                  >
+                    <mat-icon>clear</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div
+              fxFlex
+              fxLayout="row"
+              fxLAyoutAlign="end center"
+              class=""
+              *ngIf="i != 0"
+            >
+              <div class="pb-1">
+                <button
+                  mat-icon-button
+                  type="button"
+                  color="primary"
+                  (click)="removeDivision(i)"
+                >
+                  <mat-icon>clear</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Categories -->
+        <div
+          *ngIf="title === 'categories'"
+          fxFlex="100"
+          fxLayout="row wrap"
+          formArrayName="categories"
+        >
+          <div fxFlex="100">
+            <button mat-button (click)="addCategory()">Add Category</button>
+          </div>
+          <div
+            fxFlex="100"
+            fxLayout="row wrap"
+            *ngFor="
+              let category of leagueEditForm.get('categories').controls;
+              let i = index
+            "
+            [formGroupName]="i"
+          >
+            <div fxFlex="100" class="pr-1">
+              <div class="pb-1">
+                <mat-form-field class="full-width">
+                  <input
+                    matInput
+                    type="string"
+                    formControlName="name"
+                    placeholder="Category Name"
+                    required
+                  />
+                </mat-form-field>
+              </div>
+            </div>
+            <div
+              fxFlex
+              fxLayout="row"
+              fxLAyoutAlign="end center"
+              class=""
+              *ngIf="i != 0"
+            >
+              <div class="pb-1">
+                <button
+                  mat-icon-button
+                  type="button"
+                  color="primary"
+                  (click)="removeCategory(i)"
+                >
+                  <mat-icon>clear</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Officials -->
+        <div
+        *ngIf="title === 'officials'"
+        fxFlex="100"
+        fxLayout="row wrap"
+        formArrayName="officials"
+      >
+        <div fxFlex="100">
+          <button mat-button (click)="addOfficial()">Add Official</button>
+        </div>
+        <div
+          fxFlex="100"
+          fxLayout="row wrap"
+          *ngFor="
+            let official of leagueEditForm.get('officials').controls;
+            let i = index
+          "
+          [formGroupName]="i"
+        >
+          <div fxFlex="100" class="pr-1">
+            <div class="pb-1">
+              <mat-form-field class="full-width">
+                <mat-label>Referee Type</mat-label>
+                <mat-select formControlName="type">
+                  <mat-option
+                    *ngFor="let officialType of officialTypes"
+                    [value]="officialType"
+                    >{{ officialType }}</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+          <div fxFlex="100" class="pr-1">
+            <div class="pb-1">
+              <mat-form-field class="full-width">
+                <input
+                  matInput
+                  type="string"
+                  formControlName="name"
+                  placeholder="Official Name"
+                  required
+                />
+              </mat-form-field>
+            </div>
+          </div>
+          <div
+            fxFlex
+            fxLayout="row"
+            fxLAyoutAlign="end center"
+            class=""
+            *ngIf="i != 0"
+          >
+            <div class="pb-1">
+              <button
+                mat-icon-button
+                type="button"
+                color="primary"
+                (click)="removeOfficial(i)"
+              >
+                <mat-icon>clear</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+        <!-- Testing -->
+        <div
+        *ngIf="title === 'testing'"
+        fxFlex="100"
+        fxLayout="row wrap"
+        formArrayName="testing"
+      >
+        <div fxFlex="100">
+          <button mat-button (click)="addTest()">Add Test</button>
+        </div>
+        <div
+          fxFlex="100"
+          fxLayout="row wrap"
+          *ngFor="
+            let test of leagueEditForm.get('testing').controls;
+            let i = index
+          "
+          [formGroupName]="i"
+        >
+          <div fxFlex="100" class="pr-1">
+            <div class="pb-1">
+              <mat-form-field class="full-width">
+                <input
+                  matInput
+                  type="string"
+                  formControlName="type"
+                  placeholder="Test Type"
+                  required
+                />
+              </mat-form-field>
+            </div>
+          </div>
+          <div fxFlex="100" class="pr-1">
+            <div class="pb-1">
+              <mat-form-field class="full-width">
+                <input
+                  matInput
+                  type="number"
+                  formControlName="price"
+                  placeholder="Test Price"
+                  required
+                />
+              </mat-form-field>
+            </div>
+          </div>
+          <div
+            fxFlex
+            fxLayout="row"
+            fxLAyoutAlign="end center"
+            class=""
+            *ngIf="i != 0"
+          >
+            <div class="pb-1">
+              <button
+                mat-icon-button
+                type="button"
+                color="primary"
+                (click)="removeTest(i)"
+              >
+                <mat-icon>clear</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+        <!-- Genders -->
+        <div
+        *ngIf="title === 'genders'"
+        fxFlex="100"
+        fxLayout="row wrap"
+        formArrayName="genders"
+      >
+        <div fxFlex="100">
+          <button mat-button (click)="addGender()">Add Gender</button>
+        </div>
+        <div
+          fxFlex="100"
+          fxLayout="row wrap"
+          *ngFor="
+            let gender of leagueEditForm.get('genders').controls;
+            let i = index
+          "
+          [formGroupName]="i"
+        >
+          <div fxFlex="100" class="pr-1">
+            <div class="pb-1">
+              <mat-form-field class="full-width">
+                <input
+                  matInput
+                  type="string"
+                  formControlName="name"
+                  placeholder="Gender Name"
+                  required
+                />
+              </mat-form-field>
+            </div>
+          </div>
+          <div fxFlex="100" fxLayout="row wrap" formArrayName="weightClasses">
+            <div fxFlex="100">
+              <button mat-button (click)="addWeightClass(i)">
+                Add Weight Class
+              </button>
+            </div>
+            <div
+              fxFlex="100"
+              fxLayout="row wrap"
+              *ngFor="
+                let weightClass of gender.get('weightClasses').controls;
+                let j = index
+              "
+              [formGroupName]="j"
+            >
+            <div fxFlex="100" class="pr-1">
+              <div class="pb-1">
+                <mat-form-field class="full-width">
+                  <input
+                    matInput
+                    type="string"
+                    formControlName="name"
+                    placeholder="Weight Class Name"
+                    required
+                  />
+                </mat-form-field>
+              </div>
+            </div>
+            <div fxFlex="100" formGroupName="weightRange">
+              <div fxFlex="46" class="pr-1">
+                <div class="pb-1">
+                  <mat-form-field class="full-width">
+                    <input
+                      matInput
+                      type="string"
+                      formControlName="min"
+                      placeholder="Min Weight"
+                      required
+                    />
+                  </mat-form-field>
+                </div>
+              </div>
+              <div fxFlex="46" class="pr-1">
+                <div class="pb-1">
+                  <mat-form-field class="full-width">
+                    <input
+                      matInput
+                      type="string"
+                      formControlName="max"
+                      placeholder="Max Weight"
+                      required
+                    />
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+              <div fxFlex>
+                <button
+                  mat-icon-button
+                  type="button"
+                  color="primary"
+                  (click)="removeWeightClass(i, j)"
+                >
+                  <mat-icon>clear</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div
+            fxFlex
+            fxLayout="row"
+            fxLAyoutAlign="end center"
+            class=""
+            *ngIf="i != 0"
+          >
+            <div class="pb-1">
+              <button
+                mat-icon-button
+                type="button"
+                color="primary"
+                (click)="removeDivision(i)"
+              >
+                <mat-icon>clear</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+        <!-- Movements -->
+        <div
+          *ngIf="title === 'movements'"
+          fxFlex="100"
+          fxLayout="row wrap"
+          formArrayName="movements"
+        >
+          <div fxFlex="100">
+            <button mat-button (click)="addMovement()">Add Movement</button>
+          </div>
+          <div
+            fxFlex="100"
+            fxLayout="row wrap"
+            *ngFor="
+              let movement of leagueEditForm.get('movements').controls;
+              let i = index
+            "
+            [formGroupName]="i"
+          >
+            <div fxFlex="100" class="pr-1">
+              <div class="pb-1">
+                <mat-form-field class="full-width">
+                  <input
+                    matInput
+                    type="string"
+                    formControlName="name"
+                    placeholder="Movement Name"
+                    required
+                  />
+                </mat-form-field>
+              </div>
+            </div>
+            <div
+              fxFlex
+              fxLayout="row"
+              fxLAyoutAlign="end center"
+              class=""
+              *ngIf="i != 0"
+            >
+              <div class="pb-1">
+                <button
+                  mat-icon-button
+                  type="button"
+                  color="primary"
+                  (click)="removeCategory(i)"
+                >
+                  <mat-icon>clear</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Events -->
+        <div
+          *ngIf="title === 'events'"
+          fxFlex="100"
+          fxLayout="row wrap"
+          formArrayName="events"
+        >
+          <div fxFlex="100">
+            <button mat-button (click)="addEvent()">Add Event</button>
+          </div>
+          <div
+            fxFlex="100"
+            fxLayout="row wrap"
+            *ngFor="
+              let event of leagueEditForm.get('events').controls;
+              let i = index
+            "
+            [formGroupName]="i"
+          >
+            <div fxFlex="100" class="pr-1">
+              <div class="pb-1">
+                <mat-form-field class="full-width">
+                  <input
+                    matInput
+                    type="string"
+                    formControlName="type"
+                    placeholder="Event Type"
+                    required
+                  />
+                </mat-form-field>
+              </div>
+            </div>
+            <div fxFlex="100" class="pr-1">
+              <div class="pb-1">
+                <mat-form-field class="full-width">
+                  <input
+                    matInput
+                    type="string"
+                    formControlName="price"
+                    placeholder="Event Price"
+                    required
+                  />
+                </mat-form-field>
+              </div>
+            </div>
+            <div fxFlex="100" class="pr-1">
+              <div class="pb-1">
+                <mat-form-field appearance="fill">
+                  <mat-label>Lifts</mat-label>
+                  <mat-select formControlName="movements" multiple>
+                    <mat-option
+                      *ngFor="let movement of league.movements"
+                      [value]="movement"
+                      >{{ movement }}</mat-option
+                    >
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+            <div
+              fxFlex
+              fxLayout="row"
+              fxLAyoutAlign="end center"
+              class=""
+              *ngIf="i != 0"
+            >
+              <div class="pb-1">
+                <button
+                  mat-icon-button
+                  type="button"
+                  color="primary"
+                  (click)="removeEvent(i)"
+                >
+                  <mat-icon>clear</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </mat-card-content>
+
+  <!-- Button Row -->
+  <mat-dialog-actions>
+    <button
+      mat-button
+      color="warn"
+      type="button"
+      [disabled]="leagueEditForm.invalid"
+      (click)="submitForm()"
+    >
+      Submit
+    </button>
+    <button
+      mat-button
+      color="warn"
+      type="button"
+      (click)="dialogRef.close(false)"
+    >
+      Cancel
+    </button>
+  </mat-dialog-actions>
+</div>
+<div *ngIf="loaderOpen" class="spinner-wrapper" fxLayoutAlign="center center">
+  <mat-progress-spinner
+    class="example-margin"
+    [color]="warn"
+    [mode]="'indeterminate'"
+    [value]="75"
+  >
+  </mat-progress-spinner>
+</div>

@@ -1,0 +1,17 @@
+<div class="sidebar-panel">
+    <div id="scroll-area" [perfectScrollbar] class="navigation-hold" fxLayout="column">
+        <div class="sidebar-hold">
+            
+            <!-- App Logo -->
+            <div class="branding">
+                <!-- <img src="assets/images/logo.png" alt="" class="app-logo"> -->
+                <span class="app-logo-text">CPL</span>
+                
+                <span style="margin: auto; margin-right: 0; color: white" *ngIf="layoutConf.sidebarStyle !== 'compact'">Admin</span>
+            </div>
+        
+            <!-- Navigation -->
+            <app-sidenav [items]="menuItems" [hasIconMenu]="hasIconTypeMenuItem" [iconMenuTitle]="iconTypeMenuTitle"></app-sidenav>
+        </div>
+    </div>
+</div>

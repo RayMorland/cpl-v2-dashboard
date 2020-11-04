@@ -1,0 +1,250 @@
+<div
+  *ngIf="leagueReady"
+  fxLayout="column"
+  fxLayoutGap="20px"
+  style="padding: 20px"
+>
+  <div fxLayout="column" class="full-width" fxLayoutGap="10px">
+    <!-- League Info Card -->
+    <div fxLayout="row" fxLayout.lt-sm="column" class="full-width">
+      <mat-card
+        class="full-width"
+        [@animate]="{
+          value: '*',
+          params: { y: '50px', scale: '.9', delay: '100ms' }
+        }"
+        style="padding: 10px 0px 10px 0px"
+      >
+        <mat-card-title>
+          <h1>Canadian Powerlifting League</h1>
+        </mat-card-title>
+        <mat-card-content>
+          <p style="margin: 20px 0px 0px 0px">
+            Creation Date : {{ league.creationDate | date: "longDate" }}
+          </p>
+          <p>Last Edited on: {{ league.lastEditDate | date: "longDate" }}</p>
+          <p style="margin: 20px 0px 0px 0px">{{ league.description }}</p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <!-- League Edit Cards -->
+    <div class="full-width" fxLayout="row wrap" fxLayoutGap="20px">
+      <!-- Divisions -->
+      <div
+        fxFlex="50"
+        fxLayout="row"
+        fxLayout.lt-sm="column"
+        [@animate]="{
+          value: '*',
+          params: { y: '50px', scale: '.9', delay: '120ms' }
+        }"
+        style="padding: 10px 0px 10px 0px"
+      >
+        <mat-card fxFlex="100">
+          <mat-card-title>
+            <h2>Divisions</h2>
+            <span fxFlex></span>
+            <button mat-icon-button (click)="openLeagueEditPopup('Divisions')">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </mat-card-title>
+          <mat-card-content>
+            <div *ngFor="let division of league.divisions">
+              <h3>{{ division.name }}</h3>
+              <div *ngFor="let ageClass of division.ageClasses">
+                {{ ageClass.min }} - {{ ageClass.max }}
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <!-- Categories -->
+      <div
+        fxFlex
+        fxLayout="row"
+        fxLayout.lt-sm="column"
+        [@animate]="{
+          value: '*',
+          params: { y: '50px', scale: '.9', delay: '140ms' }
+        }"
+        style="padding: 10px 0px 10px 0px"
+      >
+        <mat-card fxFlex="100">
+          <mat-card-title>
+            <h2>Categories</h2>
+            <span fxFlex></span>
+            <button mat-icon-button (click)="openLeagueEditPopup('Categories')">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </mat-card-title>
+          <mat-card-content>
+            <h3 *ngFor="let category of league.categories">
+              {{ category }}
+            </h3>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <!-- Genders -->
+      <div
+        fxFlex="50"
+        fxLayout="row"
+        fxLayout.lt-sm="column"
+        [@animate]="{
+          value: '*',
+          params: { y: '50px', scale: '.9', delay: '160ms' }
+        }"
+        style="padding: 10px 0px 10px 0px"
+      >
+        <mat-card fxFlex="100">
+          <mat-card-title>
+            <h2>Genders</h2>
+            <span fxFlex></span>
+            <button mat-icon-button (click)="openLeagueEditPopup('Genders')">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </mat-card-title>
+          <mat-card-content>
+            <div *ngFor="let gender of league.genders">
+              <h3>{{ gender.name }}</h3>
+              <div *ngFor="let weightClass of gender.weightClasses">
+                {{ weightClass.name }}: {{ weightClass.weightRange.min }} -
+                {{ weightClass.weightRange.max }}
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <!-- Testing -->
+      <div
+        fxFlex
+        fxLayout="row"
+        fxLayout.lt-sm="column"
+        [@animate]="{
+          value: '*',
+          params: { y: '50px', scale: '.9', delay: '180ms' }
+        }"
+        style="padding: 10px 0px 10px 0px"
+      >
+        <mat-card fxFlex="100">
+          <mat-card-title>
+            <h2>Testing</h2>
+            <span fxFlex></span>
+            <button mat-icon-button (click)="openLeagueEditPopup('Testing')">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </mat-card-title>
+          <mat-card-content>
+            <div *ngFor="let test of league.tests">
+              <h3>{{ test.type }} - {{ test.price }}</h3>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <!-- Movements -->
+      <div
+        fxFlex="50"
+        fxLayout="row"
+        fxLayout.lt-sm="column"
+        [@animate]="{
+          value: '*',
+          params: { y: '50px', scale: '.9', delay: '180ms' }
+        }"
+        style="padding: 10px 0px 10px 0px"
+      >
+        <mat-card fxFlex="100">
+          <mat-card-title>
+            <h2>Movements</h2>
+            <span fxFlex></span>
+            <button mat-icon-button (click)="openLeagueEditPopup('Movements')">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </mat-card-title>
+          <mat-card-content>
+            <div *ngFor="let movement of league.movements">
+              <h3>{{ movement }}</h3>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <!-- Events -->
+      <div
+        fxFlex
+        fxLayout="row"
+        fxLayout.lt-sm="column"
+        [@animate]="{
+          value: '*',
+          params: { y: '50px', scale: '.9', delay: '180ms' }
+        }"
+        style="padding: 10px 0px 10px 0px"
+      >
+        <mat-card fxFlex="100">
+          <mat-card-title>
+            <h2>Events</h2>
+            <span fxFlex></span>
+            <button mat-icon-button (click)="openLeagueEditPopup('Events')">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </mat-card-title>
+          <mat-card-content>
+            <div *ngFor="let event of league.events">
+              <h3>{{ event.type }}</h3>
+              <p>Price: {{ event.price }}</p>
+              <h4>Lifts</h4>
+              <div *ngFor="let lift of event.movements">
+                {{ lift }}
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <!-- Officials -->
+      <div
+        fxFlex="50"
+        fxLayout="row"
+        fxLayout.lt-sm="column"
+        [@animate]="{
+          value: '*',
+          params: { y: '50px', scale: '.9', delay: '200ms' }
+        }"
+        style="padding: 10px 0px 10px 0px"
+      >
+        <mat-card fxFlex="100">
+          <mat-card-title>
+            <h2>Officials</h2>
+            <span fxFlex></span>
+            <button mat-icon-button (click)="openLeagueEditPopup('Officials')">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </mat-card-title>
+          <mat-card-content>
+            <div *ngFor="let official of league.officials">
+              {{ official.name }} - {{ official.type }}
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <!-- Logo -->
+      <!-- <div
+        fxFlex
+        fxLayout="row"
+        fxLayout.lt-sm="column"
+        [@animate]="{
+          value: '*',
+          params: { y: '50px', scale: '.9', delay: '220ms' }
+        }"
+        style="padding: 10px 0px 10px 0px"
+      >
+        <mat-card fxFlex="100">
+          <mat-card-title>
+            <h2>Logo</h2>
+            <span fxFlex></span>
+            <button mat-icon-button (click)="openLeagueEditPopup('Logo')">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </mat-card-title>
+          <mat-card-content> Change Logo </mat-card-content>
+        </mat-card>
+      </div> -->
+    </div>
+  </div>
+</div>

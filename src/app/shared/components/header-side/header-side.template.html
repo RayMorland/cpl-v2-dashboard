@@ -1,0 +1,42 @@
+<mat-toolbar class="topbar">
+  <!-- Sidenav toggle button -->
+  <button
+    *ngIf="layoutConf.sidebarStyle !== 'compact'"
+    mat-icon-button
+    id="sidenavToggle"
+    (click)="toggleSidenav()"
+    matTooltip="Toggle Hide/Open"
+  >
+    <mat-icon *ngIf="sidebarOpen">menu_open</mat-icon>
+    <mat-icon *ngIf="!sidebarOpen">menu</mat-icon>
+  </button>
+  <span fxFlex="10px"></span>
+  <!-- <button
+    *ngIf="layoutConf.sidebarStyle !== 'compact'"
+    mat-button
+    color="warn"
+    id="registerButton"
+    [routerLink]="['/meets/new']"
+    matTooltip="Create meet"
+  >
+    Create MEET
+  </button> -->
+
+  <span fxFlex></span>
+
+  <!-- <egret-search-input-over placeholder="Country (e.g. US)" resultPage="/search">
+  </egret-search-input-over> -->
+
+  <!-- Top left user menu -->
+  <button mat-button [matMenuTriggerFor]="accountMenu" class="topbar-button-right">
+    <span>Raymond</span>
+    <mat-icon>arrow_drop_down</mat-icon>
+  </button>
+
+  <mat-menu #accountMenu="matMenu">
+    <button mat-menu-item (click)="logout()">
+      <mat-icon>exit_to_app</mat-icon>
+      <span>Sign out</span>
+    </button>
+  </mat-menu>
+</mat-toolbar>

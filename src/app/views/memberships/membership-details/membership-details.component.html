@@ -1,0 +1,57 @@
+<div fxLayout="column" *ngIf="membershipReady" fxLayoutGap="20px" style="padding: 20px">
+  <div class="full-width" fxLayout="row" [@animate]="{ value: '*', params: { scale: '.9', delay: '100ms' } }">
+    <button mat-button color="primary" [routerLink]="['/memberships']">
+      <mat-icon>arrow_back</mat-icon> Back to memberships List
+    </button>
+    <span fxFlex="20px"></span>
+    <button
+      mat-button
+      color="primary"
+      [routerLink]="['/memberships/' + membership._id + '/edit']"
+    >
+      <mat-icon>edit</mat-icon> Edit Membership
+    </button>
+  </div>
+  <div class="full-width" fxLayout="column" fxLayoutGap="20px" [@animate]="{ value: '*', params: { y: '50px', delay: '150ms' } }">
+    <div class="full-width" fxLayout="column">
+      <mat-card fxFlex="100" class="p-0">
+        <mat-card-title>
+          <div class="card-title-text">
+            <h1>{{ membership?.name }}</h1>
+          </div>
+        </mat-card-title>
+        <mat-card-content>
+          <p>{{ membership.description }}</p>
+          <h3>Created On: {{ membership.creationDate | date: 'longDate' }}</h3>
+          <h3>Last Edited On: {{ membership.lastEditDate | date: 'longDate' }}</h3>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <div class="full-width" fxLayout="row wrap">
+      <mat-card class="p-0" fxFlex="100">
+        <mat-card-title>
+          <div class="card-title-text">
+            <h2>Plans</h2>
+          </div>
+        </mat-card-title>
+        <mat-card-content>
+          <mat-card *ngFor="let plan of membershipPlans">
+            <h3>{{ plan.name }}</h3>
+          </mat-card>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <div class="full-width" fxLayout="row wrap">
+      <mat-card class="p-0" fxFlex="100">
+        <mat-card-title>
+          <div class="card-title-text">
+            <h2>Members With Membership</h2>
+          </div>
+        </mat-card-title>
+        <mat-card-content>
+
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

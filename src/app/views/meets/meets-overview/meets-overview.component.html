@@ -1,0 +1,252 @@
+<div *ngIf="meetsReady">
+  <!-- Meet Options Buttons -->
+  <div
+    fxLayout="row"
+    fxLayout.lt-sm="column"
+    class="shop-top-toolbar"
+    [@animate]="{ value: '*', params: { scale: '.9', delay: '300ms' } }"
+  >
+    <button mat-button color="primary" routerLink="/meets/new">
+      <mat-icon>add</mat-icon> New Meet
+    </button>
+    <span fxFlex="10px"></span>
+    <button mat-button color="primary" routerLink="/meets/list">
+      <mat-icon>list</mat-icon> Meet List
+    </button>
+    <span fxFlex="10px"></span>
+    <button mat-button color="primary" routerLink="/meets/requests">
+      <mat-icon>list</mat-icon> Meet Requests
+    </button>
+  </div>
+
+  <!-- Simple Meets List With Search -->
+  <div fxLayout="row wrap">
+    <div
+      fxFlex="100"
+      [@animate]="{ value: '*', params: { scale: '.9', delay: '300ms' } }"
+    >
+      <mat-card> 
+        <mat-card-title fxLayoutAlign="start center">
+          Meets
+        </mat-card-title>
+        <mat-card-content>
+          <div fxLayout="row"></div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Meets Quick Stats Row -->
+  <!-- <div fxLayout="row wrap">
+    <div fxFlex="100" fxFlex.gt-sm="25" fxFlex.sm="50" [@animate]="{value:'*',params:{scale:'.9',delay:'300ms'}}">
+      <mat-card>
+        <mat-card-title fxLayoutAlign="start center">
+          <small class="text-muted">Meets This Month</small>
+          <span fxFlex></span>
+          <mat-chip class="icon-chip" color="accent" selected="true">
+            <mat-icon>trending_up</mat-icon>9%
+          </mat-chip>
+        </mat-card-title>
+        <mat-card-content>
+          <h3 class="m-0 font-normal">2</h3>
+          <small class="text-muted">Monthly</small>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div fxFlex="100" fxFlex.gt-sm="25" fxFlex.sm="50" [@animate]="{value:'*',params:{delay:'300ms',scale:'.9'}}">
+      <mat-card>
+        <mat-card-title>
+          <small class="text-muted">Completed Meets This Year</small>
+          <span fxFlex></span>
+          <mat-chip class="icon-chip" color="accent" selected="true">
+            <mat-icon>trending_up</mat-icon>9%
+          </mat-chip>
+        </mat-card-title>
+        <mat-card-content>
+          <h3 class="m-0 font-normal">377,670</h3>
+          <small class="text-muted">Monthly</small>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div fxFlex="100" fxFlex.gt-sm="25" fxFlex.sm="50" [@animate]="{value:'*',params:{delay:'300ms',scale:'.9'}}">
+      <mat-card>
+        <mat-card-title>
+          <small class="text-muted">Upcoming Meets This Year</small>
+          <span fxFlex></span>
+          <mat-chip class="icon-chip" color="accent" selected="true">
+            <mat-icon>trending_up</mat-icon>9%
+          </mat-chip>
+        </mat-card-title>
+        <mat-card-content>
+          <h3 class="m-0 font-normal">54,845</h3>
+          <small class="text-muted">Monthly</small>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <div fxFlex="100" fxFlex.gt-sm="25" fxFlex.sm="50" [@animate]="{value:'*',params:{delay:'300ms',scale:'.9'}}">
+      <mat-card>
+        <mat-card-title>
+          <small class="text-muted">New Meet Requests</small>
+          <span fxFlex></span>
+          <mat-chip class="icon-chip" color="warn" selected="true">
+            <mat-icon>trending_down</mat-icon>2%
+          </mat-chip>
+        </mat-card-title>
+        <mat-card-content>
+          <h3 class="m-0 font-normal">2</h3>
+          <small class="text-muted">Monthly</small>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div> -->
+
+  <!-- Meets Upcoming and Past -->
+  <!-- <div fxLayout="row wrap">
+    <div fxFlex="100" fxFlex.gt-sm="50" fxFlex.sm="50" [@animate]="{value:'*',params:{scale:'.9',delay:'300ms'}}">
+      <mat-card>
+        <mat-card-title fxLayoutAlign="start center">
+          <small class="text-muted">Upcoming Meets</small>
+        </mat-card-title>
+        <mat-card-content>
+          <div *ngIf="upcomingMeets.length > 0">
+            <table mat-table [dataSource]="upcomingMeets" class="">
+              <ng-container matColumnDef="date">
+                <th mat-header-cell *matHeaderCellDef> Date </th>
+                <td mat-cell *matCellDef="let meet"> {{meet.dates.startTime}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="title">
+                <th mat-header-cell *matHeaderCellDef> Title </th>
+                <td mat-cell *matCellDef="let meet"> {{meet.title}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="coordinator">
+                <th mat-header-cell *matHeaderCellDef> Coordinator </th>
+                <td mat-cell *matCellDef="let meet"> {{meet.coordinator.name}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="edit">
+                <th mat-header-cell *matHeaderCellDef> Options</th>
+                <td mat-cell *matCellDef="let meet">
+                  <button mat-icon-button [routerLink]="['/meets/' + meet._id + '/edit']">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+            </table>
+          </div>
+          <div *ngIf="upcomingMeets.length == 0">
+            <h4 style="margin-top: 20px;">No Upcoming Meets</h4>
+          </div>
+        </mat-card-content>
+        <mat-card-actions>
+          <button *ngIf="upcomingMeets.length > 0" mat-button [routerLink]="['/meets/list']">See All Upcoming Meets</button>
+          <button *ngIf="upcomingMeets.length == 0" mat-button [routerLink]="['/meets/list']">See All Meets</button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+    <div fxFlex="100" fxFlex.gt-sm="50" fxFlex.sm="50" [@animate]="{value:'*',params:{scale:'.9',delay:'300ms'}}">
+      <mat-card>
+        <mat-card-title fxLayoutAlign="start center">
+          <small class="text-muted">Previous Meets</small>
+        </mat-card-title>
+        <mat-card-content>
+          <table mat-table [dataSource]="previousMeets" class="">
+            <ng-container matColumnDef="date">
+              <th mat-header-cell *matHeaderCellDef> Date </th>
+              <td mat-cell *matCellDef="let meet"> {{meet.dates.startTime}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="title">
+              <th mat-header-cell *matHeaderCellDef> Title </th>
+              <td mat-cell *matCellDef="let meet"> {{meet.title}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="coordinator">
+              <th mat-header-cell *matHeaderCellDef> Coordinator</th>
+              <td mat-cell *matCellDef="let meet"> {{meet.coordinator.name}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="edit">
+              <th mat-header-cell *matHeaderCellDef> Options</th>
+              <td mat-cell *matCellDef="let meet">
+                <button mat-icon-button [routerLink]="['/meets/' + meet._id + '/edit']">
+                  <mat-icon>edit</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          </table>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button [routerLink]="['/meets/list']">See All Previous Meets</button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div> -->
+
+  <!-- Charts -->
+  <!-- <div fxLayout="row wrap">
+    <div fxFlex="100" fxFlex.gt-sm="50">
+      <mat-card class="p-0">
+        <mat-card-title class="">
+          <div class="card-title-text">Meet Distribution By Province</div>
+          <mat-divider></mat-divider>
+        </mat-card-title>
+        <mat-card-content>
+          <canvas class="chart" baseChart [data]="provinceChartData" [labels]="provinceChartLabels" [options]="doughnutOptions"
+            [colors]="doughnutChartColors" [chartType]="pieChartType" (chartHover)="pieChartHovered($event)"
+            (chartClick)="pieChartClicked($event)"></canvas>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div fxFlex="100" fxFlex.gt-sm="50">
+      <mat-card class="p-0">
+        <mat-card-title class="">
+          <div class="card-title-text">Meet Distribution By Coordinator</div>
+          <mat-divider></mat-divider>
+        </mat-card-title>
+        <mat-card-content>
+          <canvas class="chart" baseChart [data]="coordinatorChartData" [labels]="coordinatorChartLabels" [options]="doughnutOptions"
+            [colors]="doughnutChartColors" [chartType]="pieChartType" (chartHover)="pieChartHovered($event)"
+            (chartClick)="pieChartClicked($event)"></canvas>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div> -->
+
+  <!-- Pending Meet Requests -->
+  <!-- <div fxLayout="row wrap">
+    <div fxFlex="100" fxFlex.gt-sm="100" fxLayout="column wrap">
+      <mat-card class="default" [@animate]="{value:'*',params:{delay:'300ms',y:'50px'}}">
+        <mat-card-title>Pending Meet Requests</mat-card-title>
+        <mat-card-content class="p-0">
+          <mat-list class="compact-list mb-1">
+            <mat-list-item class="" *ngFor="let t of tickets">
+              <img mat-list-avatar class="mr-1" [src]="t.img" alt="">
+              <div fxLayout="row" fxFlex="100">
+                <h6 class="m-0 mr-1">{{t.name}}</h6>
+                <span fxFlex></span>
+                <div fxFlex="40">{{t.text | excerpt:20 }}</div>
+                <span fxFlex></span>
+                <small class="text-muted mr-1">{{ t.date | relativeTime}}</small>
+              </div>
+              <mat-chip mat-sm-chip [color]="'warn'" [selected]="t.isOpen">{{t.isOpen ? 'active' : 'closed'}}</mat-chip>
+            </mat-list-item>
+          </mat-list>
+          <div class="text-center">
+            <button mat-button class="full-width">View all</button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div> -->
+</div>

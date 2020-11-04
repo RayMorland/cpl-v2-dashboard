@@ -1,0 +1,471 @@
+<div fxLayout="column" *ngIf="memberReady" style="padding: 20px">
+  <!-- Top Buttons -->
+  <div
+    class="full-width top-toolbar"
+    fxLayout="row"
+    [@animate]="{ value: '*', params: { scale: '.9', delay: '100ms' } }"
+  >
+    <button mat-button [routerLink]="['/members']">
+      <mat-icon>arrow_back</mat-icon> Back to Members List
+    </button>
+    <span fxFlex="20px"></span>
+    <button mat-button [routerLink]="['/members/' + memberId + '/edit']">
+      <mat-icon>create</mat-icon> Edit Member
+    </button>
+  </div>
+  <!-- Main Member content -->
+  <div
+    fxLayout="row wrap"
+    fxLayoutGap="20px"
+    style="height: inherit; margin-top: 20px"
+  >
+    <div
+      class="profile-sidebar"
+      fxFlex="100"
+      fxFlex.gt-sm="300px"
+      fxLayout="row"
+      fxLayoutAlign="start center"
+    >
+      <div
+        fxFlex="100"
+        fxLayout="column"
+        fxLayoutGap="20px"
+        class="profile-info"
+      >
+        <mat-card
+          class="mat-card"
+          fxLayout="column"
+          fxLayoutAlign="space-around center"
+          [@animate]="{ value: '*', params: { y: '50px', delay: '150ms' } }"
+        >
+          <mat-card-content>
+            <div fxLayout="row wrap" fxLayoutAlign="center center">
+              <div fxFlex="100" fxLayout="row" fxLayoutAlign="center center">
+                <div class="propic text-center">
+                  <img src="assets/images/sq-face-220.jpg" alt="" />
+                </div>
+              </div>
+              <div class="profile-title text-center mb-1">
+                <div class="main-title mt-1">
+                  <h2>
+                    {{ member.personal.firstName }}
+                    {{ member.personal.lastName }}
+                  </h2>
+                </div>
+                <div>Status: {{ member.status }}</div>
+                <div>
+                  Member Since: {{ member.creationDate | date: "longDate" }}
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+        <!-- Membership Information -->
+        <mat-card
+          class="mat-card"
+          [@animate]="{ value: '*', params: { y: '50px', delay: '175ms' } }"
+        >
+          <mat-card-content class="">
+            <h2>Membership Info</h2>
+            <mat-list class="p-0">
+              <mat-list-item class="p-0"
+                ><mat-icon class="mr-1">card_membership</mat-icon> Membership: 
+                <a
+                  [routerLink]="[
+                    '/memberships/' + member.membership.membershipId._id
+                  ]"
+                > {{ member.membership.membershipId.name }}</a
+                >
+                </mat-list-item
+              >
+              <mat-list-item class="p-0"
+                ><mat-icon class="mr-1">attach_money</mat-icon> Fees Paid:
+                {{ member.membership.feePaid }}</mat-list-item
+              >
+              <mat-list-item>
+                <mat-icon class="mr-1">
+                  calendar_today
+                </mat-icon>
+                Renew Date: {{ member.membership.endDate }}
+              </mat-list-item>
+            </mat-list>
+          </mat-card-content>
+        </mat-card>
+        <!-- Contact Information -->
+        <mat-card
+          class="mat-card"
+          [@animate]="{ value: '*', params: { y: '50px', delay: '200ms' } }"
+        >
+          <mat-card-content class="">
+            <h2>Contact Info</h2>
+            <mat-list class="p-0">
+              <mat-list-item class="p-0"
+                ><mat-icon class="mr-1">email</mat-icon>
+                {{ member.email }}</mat-list-item
+              >
+              <mat-list-item class="p-0"
+                ><mat-icon class="mr-1">phone</mat-icon>
+                {{ member.personal.phone }}</mat-list-item
+              >
+            </mat-list>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+    <div fxLayout="column" fxLayoutGap="20px" fxFlex="100" fxFlex>
+      <!-- Meet Registrations -->
+      <mat-card
+        [@animate]="{ value: '*', params: { y: '50px', delay: '160ms' } }"
+        class="mat-card"
+      >
+        <mat-card-content>
+          <h2>Registrations</h2>
+          <div *ngIf="memberRegistrations.length == 0">No Registrations</div>
+          <div
+            *ngIf="memberRegistrations.length > 0"
+            fxLayout="row wrap"
+            fxLayoutAlign="end space-between"
+            class=""
+            style="margin-top: 25px"
+          >
+            <mat-form-field fxFlex="100" class="pb-0">
+              <mat-label>Filter Registrations</mat-label>
+              <input
+                matInput
+                (keyup)="filterRegistrations($event)"
+                placeholder="Ex. ium"
+                #input
+              />
+            </mat-form-field>
+            <table
+              mat-table
+              [dataSource]="registrationsDataSource"
+              class="cpl-table"
+              id="billing-table"
+              fxFlex="100"
+            >
+              <!-- Meet Title Column -->
+              <ng-container matColumnDef="meet_title">
+                <th mat-header-cell *matHeaderCellDef>Meet Title</th>
+                <td mat-cell *matCellDef="let element">
+                  <a [routerLink]="['/meets/' + element.meetId._id]">{{
+                    element.meetId.title
+                  }}</a>
+                </td>
+              </ng-container>
+
+              <!-- Status Column -->
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>Fee Paid</th>
+                <td mat-cell *matCellDef="let element">{{ element.status }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell style="text-align: right" *matHeaderCellDef>
+                  Actions
+                </th>
+                <td mat-cell *matCellDef="let element">
+                  <div fxLayout="row" fxLayoutAlign="end center">
+                    <button
+                      mat-icon-button
+                      mat-sm-button
+                      color="primary"
+                      class="mr-1"
+                      (click)="openViewMemberRegistrationPopUp(element, false)"
+                    >
+                      <mat-icon>visibility</mat-icon>
+                    </button>
+                    <a
+                      mat-icon-button
+                      mat-sm-button
+                      matTooltip="Download Registration"
+                      color="primary"
+                      class="mr-1"
+                      download
+                      target="_blank"
+                      [href]="element.regLink"
+                    >
+                      <mat-icon>get_app</mat-icon>
+                  </a>
+                  </div>
+                </td>
+              </ng-container>
+
+              <tr
+                mat-header-row
+                *matHeaderRowDef="registrationsDisplayedColumns"
+              ></tr>
+              <tr
+                mat-row
+                *matRowDef="let row; columns: registrationsDisplayedColumns"
+              ></tr>
+            </table>
+            <mat-paginator
+              #registrationsPaginator
+              [pageSizeOptions]="[5]"
+            ></mat-paginator>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      <!-- Lifting Records -->
+      <mat-card
+        [@animate]="{ value: '*', params: { y: '50px', delay: '210ms' } }"
+        class="mat-card"
+      >
+        <mat-card-content>
+          <h2>Records</h2>
+          <div *ngIf="memberRecords.length == 0">No Records</div>
+          <div
+            *ngIf="memberRecords.length > 0"
+            fxLayout="row wrap"
+            fxLayoutAlign="end space-between"
+            class=""
+            style="margin-top: 25px"
+          >
+            <mat-form-field fxFlex="100" class="pb-0">
+              <mat-label>Filter Billing</mat-label>
+              <input
+                matInput
+                (keyup)="filterBilling($event)"
+                placeholder="Ex. ium"
+                #input
+              />
+            </mat-form-field>
+            <table
+              mat-table
+              [dataSource]="recordsDataSource"
+              class="mat-elevation-z8"
+              class="cpl-table"
+              id="billing-table"
+            >
+              <!-- Id Column -->
+              <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef>Id</th>
+                <td mat-cell *matCellDef="let element">{{ element._id }}</td>
+              </ng-container>
+
+              <!-- Status Column -->
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>Status</th>
+                <td mat-cell *matCellDef="let element">{{ element.status }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell style="text-align: right" *matHeaderCellDef>
+                  Actions
+                </th>
+                <td mat-cell *matCellDef="let element">
+                  <div fxLayout="row" fxLayoutAlign="end center">
+                    <button
+                      mat-icon-button
+                      mat-sm-button
+                      color="primary"
+                      class="mr-1"
+                      (click)="openViewMemberRecordPopUp(element, false)"
+                    >
+                      <mat-icon>visibility</mat-icon>
+                    </button>
+                  </div>
+                </td>
+              </ng-container>
+
+              <tr
+                mat-header-row
+                *matHeaderRowDef="recordsDisplayedColumns"
+              ></tr>
+              <tr
+                mat-row
+                *matRowDef="let row; columns: recordsDisplayedColumns"
+              ></tr>
+            </table>
+            <mat-paginator
+              #recordsPaginator
+              [pageSizeOptions]="[5]"
+            ></mat-paginator>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      <!-- Meet Results -->
+      <mat-card
+        [@animate]="{ value: '*', params: { y: '50px', delay: '250ms' } }"
+        class="mat-card"
+      >
+        <mat-card-content>
+          <h2>Results</h2>
+          <div *ngIf="memberResults.length == 0">No Results</div>
+          <div
+            *ngIf="memberResults.length > 0"
+            fxLayout="row wrap"
+            fxLayoutAlign="end space-between"
+            class=""
+            style="margin-top: 25px"
+          >
+            <mat-form-field fxFlex="100" class="pb-0">
+              <mat-label>Filter Results</mat-label>
+              <input
+                matInput
+                (keyup)="filterResults($event)"
+                placeholder="Ex. ium"
+                #input
+              />
+            </mat-form-field>
+            <table
+              mat-table
+              [dataSource]="resultsDataSource"
+              class="mat-elevation-z8"
+              class="cpl-table"
+              id="billing-table"
+            >
+              <!-- Id Column -->
+              <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef>Id</th>
+                <td mat-cell *matCellDef="let element">{{ element._id }}</td>
+              </ng-container>
+
+              <!-- Status Column -->
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>Status</th>
+                <td mat-cell *matCellDef="let element">{{ element.status }}</td>
+              </ng-container>
+
+              <!-- Meet Column -->
+
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell style="text-align: right" *matHeaderCellDef>
+                  Actions
+                </th>
+                <td mat-cell *matCellDef="let element">
+                  <div fxLayout="row" fxLayoutAlign="end center">
+                    <button
+                      mat-icon-button
+                      mat-sm-button
+                      color="primary"
+                      class="mr-1"
+                      (click)="openViewMemberResultPopUp(element, false)"
+                    >
+                      <mat-icon>visibility</mat-icon>
+                    </button>
+                  </div>
+                </td>
+              </ng-container>
+
+              <tr
+                mat-header-row
+                *matHeaderRowDef="resultsDisplayedColumns"
+              ></tr>
+              <tr
+                mat-row
+                *matRowDef="let row; columns: resultsDisplayedColumns"
+              ></tr>
+            </table>
+            <mat-paginator
+              #resultsPaginator
+              [pageSizeOptions]="[5]"
+            ></mat-paginator>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      <!-- Billing -->
+      <mat-card
+        [@animate]="{ value: '*', params: { y: '50px', delay: '290ms' } }"
+        class="mat-card"
+      >
+        <mat-card-content>
+          <h2>Billing</h2>
+          <div *ngIf="memberBilling.length == 0">No Invoices</div>
+          <div
+            *ngIf="memberBilling.length > 0"
+            fxLayout="row wrap"
+            fxLayoutAlign="end space-between"
+            class=""
+            style="margin-top: 25px"
+          >
+            <mat-form-field fxFlex="100" class="pb-0">
+              <mat-label>Filter Invoices</mat-label>
+              <input
+                matInput
+                (keyup)="filterInvoices($event)"
+                placeholder="Ex. ium"
+                #input
+              />
+            </mat-form-field>
+            <table
+              mat-table
+              [dataSource]="billingDataSource"
+              class="cpl-table"
+              id="billing-table"
+            >
+              <!-- Id Column -->
+              <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef>Id</th>
+                <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+              </ng-container>
+
+              <!-- Id Column -->
+              <ng-container matColumnDef="amount_due">
+                <th mat-header-cell *matHeaderCellDef>Amount Due</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.amount_due }}
+                </td>
+              </ng-container>
+
+              <!-- Status Column -->
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>Status</th>
+                <td mat-cell *matCellDef="let element">{{ element.status }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell style="text-align: right" *matHeaderCellDef>
+                  Actions
+                </th>
+                <td mat-cell *matCellDef="let element">
+                  <div fxLayout="row" fxLayoutAlign="end center">
+                    <button
+                      mat-icon-button
+                      mat-sm-button
+                      color="primary"
+                      class="mr-1"
+                      (click)="openViewMemberInvoicePopUp(element, false)"
+                    >
+                      <mat-icon>visibility</mat-icon>
+                    </button>
+                  </div>
+                </td>
+              </ng-container>
+
+              <tr
+                mat-header-row
+                *matHeaderRowDef="billingDisplayedColumns"
+              ></tr>
+              <tr
+                mat-row
+                *matRowDef="let row; columns: billingDisplayedColumns"
+              ></tr>
+            </table>
+            <mat-paginator
+              #billingPaginator
+              [pageSizeOptions]="[5]"
+            ></mat-paginator>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      <!-- Member Actions -->
+      <mat-card
+        [@animate]="{ value: '*', params: { y: '50px', delay: '340ms' } }"
+        class="mat-card"
+      >
+        <mat-card-content>
+          <div fxLayout="row wrap">
+            <div fxFlex="100" style="margin-bottom: 20px"><h2>Member Actions</h2></div>
+            <div fxFlex="100">
+              <button mat-button>Suspend Member</button>
+              <span fxFlex="20px"></span>
+              <button mat-button (click)="deleteMember()">Delete Member</button>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

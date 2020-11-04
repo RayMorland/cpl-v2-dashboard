@@ -1,0 +1,33 @@
+.meet-card:hover {
+    cursor: pointer;
+    -webkit-box-shadow: 0px 0px 58px -9px rgba(191,191,191,1);
+    -moz-box-shadow: 0px 0px 58px -9px rgba(191,191,191,1);
+    box-shadow: 0px 0px 58px -9px rgba(191,191,191,1) !important;
+
+}
+
+.meet-card:focus {
+    outline: 0;
+}
+
+.featured-img {
+    background-color: rgba(190,190,190,.5);
+    background-position: center;
+    background-size: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 275px;
+    
+}
+
+.filter {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top:0;
+    left:0;
+    background-color: rgba(25,25,25, .6);
+    padding: 10px;
+}

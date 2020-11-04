@@ -1,0 +1,244 @@
+<div fxLayout="column" fxLayoutGap="20px" style="padding: 20px">
+  <div
+    fxLayout="row"
+    fxLayout.lt-sm="column"
+    class="full-width"
+    [@animate]="{ value: '*', params: { y: '50px', delay: '100ms' } }"
+  >
+    <button *ngIf="!editMode" mat-button [routerLink]="['/members']">
+      <mat-icon>arrow_back</mat-icon> Back to Members List
+    </button>
+    <button *ngIf="editMode" mat-button [routerLink]="['/members/' + memberId]">
+      <mat-icon>arrow_back</mat-icon> Back to Member
+    </button>
+  </div>
+  <div
+    fxLayout="row"
+    fxLayout.lt-sm="column"
+    class="full-width"
+  >
+    <mat-card
+      *ngIf="formReady"
+      class="p-0 full-width"
+      [@animate]="{ value: '*', params: { y: '50px', delay: '150ms' } }"
+    >
+      <mat-card-title class="" style="padding: 20px">
+        <div *ngIf="editMode && this.member.hasOwnProperty('personal')">
+          <h1>{{ member.personal.firstName }}</h1>
+        </div>
+        <div *ngIf="editMode && !this.member.hasOwnProperty('personal')">
+          <h1>{{ member._id }}</h1>
+        </div>
+        <div *ngIf="!editMode" class="card-title-text">
+          <h1><b>New Member</b></h1>
+        </div>
+        <mat-divider></mat-divider>
+      </mat-card-title>
+      <mat-card-content>
+        <form [formGroup]="memberForm">
+          <!-- Personal Info -->
+          <div fxLayout="row wrap" formGroupName="personal">
+            <div fxFlex="100">
+              <h2><b>Personal</b></h2>
+            </div>
+            <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+              <mat-form-field class="full-width">
+                <input
+                  matInput
+                  name="firstName"
+                  formControlName="firstName"
+                  placeholder="first name (Min Length: 4, Max Length: 9)"
+                />
+              </mat-form-field>
+            </div>
+            <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+              <mat-form-field class="full-width">
+                <input
+                  matInput
+                  name="lastName"
+                  formControlName="lastName"
+                  placeholder="last name (Min Length: 4, Max Length: 9)"
+                />
+              </mat-form-field>
+            </div>
+            <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+              <mat-form-field class="full-width">
+                <input
+                  matInput
+                  name="email"
+                  formControlName="email"
+                  placeholder="email"
+                />
+              </mat-form-field>
+            </div>
+            <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+              <mat-form-field class="full-width pt-1 pb-1">
+                <input
+                  matInput
+                  [matDatepicker]="picker"
+                  placeholder="Choose a date"
+                  formControlName="dob"
+                />
+                <mat-datepicker-toggle
+                  matSuffix
+                  [for]="picker"
+                ></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+            </div>
+            <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+              <mat-form-field class="full-width">
+                <mat-label>Gender</mat-label>
+                <mat-select formControlName="gender">
+                  <mat-option
+                    *ngFor="let gender of league.genders"
+                    [value]="gender.name"
+                  >
+                    {{ gender.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+              <div class="pb-1">
+                <mat-form-field class="full-width">
+                  <input
+                    matInput
+                    name="phone"
+                    formControlName="phone"
+                    placeholder="phone"
+                  />
+                </mat-form-field>
+              </div>
+            </div>
+            <div fxLayout="row wrap" formGroupName="address">
+              <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                <mat-form-field class="full-width">
+                  <input
+                    matInput
+                    placeholder="Street Address"
+                    formControlName="street"
+                    required
+                  />
+                </mat-form-field>
+              </div>
+              <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                <mat-form-field class="full-width">
+                  <input
+                    matInput
+                    placeholder="City"
+                    formControlName="city"
+                    required
+                  />
+                </mat-form-field>
+              </div>
+              <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                <mat-form-field class="full-width pt-1 pb-1">
+                  <mat-label>Country</mat-label>
+                  <mat-select formControlName="country">
+                    <mat-option
+                      *ngFor="let country of platformService.countries"
+                      [value]="country"
+                    >
+                      {{ country }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                <mat-form-field class="full-width pt-1 pb-1">
+                  <mat-label>Province</mat-label>
+                  <mat-select formControlName="province">
+                    <mat-option
+                      *ngFor="let province of platformService.provinces"
+                      [value]="province"
+                    >
+                      {{ province }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                <mat-form-field class="full-width pt-1 pb-1">
+                  <input
+                    matInput
+                    placeholder="Postal Code"
+                    formControlName="postal"
+                    required
+                  />
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+          <!-- Membership Info -->
+          <div fxLayout="row wrap" formGroupName="membership">
+            <div fxFlex="100">
+              <h2><b>Membership</b></h2>
+            </div>
+            <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+              <mat-form-field class="full-width">
+                <mat-label>Membership</mat-label>
+                <mat-select formControlName="cplMembership">
+                  <mat-option
+                    *ngFor="let membership of cplMemberships"
+                    [value]="membership._id"
+                  >
+                    {{ membership.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+              <mat-form-field class="full-width">
+                <mat-label>Plan</mat-label>
+                <mat-select formControlName="membershipPlan">
+                  <mat-option
+                    *ngFor="let plan of membershipPlans"
+                    [value]="plan._id"
+                  >
+                    {{ plan.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+              <mat-form-field class="full-width">
+                <input
+                  matInput
+                  type="date"
+                  formControlName="startDate"
+                  placeholder="Membership Start Date"
+                  required
+                />
+              </mat-form-field>
+            </div>
+            <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+              <mat-form-field class="full-width">
+                <input
+                  matInput
+                  type="date"
+                  formControlName="endDate"
+                  placeholder="Membership End Date"
+                  required
+                />
+              </mat-form-field>
+            </div>
+            <div fxLayout="row" fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+              <mat-slide-toggle fxFlex="50" formControlName="membershipActive"
+                >Membership Active</mat-slide-toggle
+              >
+              <mat-slide-toggle fxFlex="50" formControlName="feePaid"
+                >Fee Paid</mat-slide-toggle
+              >
+            </div>
+          </div>
+        </form>
+      </mat-card-content>
+      <mat-card-actions class="p-1">
+        <button mat-button color="primary" (click)="submitForm()">
+          Submit
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

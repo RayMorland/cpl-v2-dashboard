@@ -1,0 +1,50 @@
+<div *ngIf="formReady">
+  <h1 matDialogTitle>{{ data.title }}</h1>
+  Add Applicaiton
+  <form [formGroup]="coordinatorApplicationForm" (ngSubmit)="submitForm()">
+    <div fxLayout="row wrap" fxLayout.lt-sm="column">
+      <div fxFlex="50" class="pt-1 pr-1">
+        <mat-slide-toggle formControlName="status"
+          >Active Coordinator</mat-slide-toggle
+        >
+      </div>
+    </div>
+    <div fxLayout="row wrap" fxLayout.lt-sm="column">
+      <div fxFlex="100" class="mt-1">
+          <button
+          mat-raised-button
+          color="primary"
+          type="button"
+          (click)="reject()"
+        >
+          REJECT
+        </button>
+        <button
+        mat-raised-button
+        color="primary"
+        type="button"
+        (click)="accept()"
+      >
+        ACCEPT
+      </button>
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="coordinatorApplicationForm.invalid"
+        >
+          SAVE
+        </button>
+        <span fxFlex></span>
+        <button
+          mat-button
+          color="warn"
+          type="button"
+          (click)="dialogRef.close(false)"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

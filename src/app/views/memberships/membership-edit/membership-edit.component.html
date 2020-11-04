@@ -1,0 +1,178 @@
+<div fxLayout="column" *ngIf="membershipReady" fxLayoutGap="20px" style="padding: 20px">
+  <div class="full-width" fxLayout="row" [@animate]="{ value: '*', params: { y: '50px', delay: '100ms' } }">
+    <button
+      *ngIf="!editMode"
+      mat-button
+      color="primary"
+      [routerLink]="['/memberships']"
+    >
+      <mat-icon>arrow_back</mat-icon> Back to Memberships
+    </button>
+    <button
+      *ngIf="editMode"
+      mat-button
+      color="primary"
+      [routerLink]="['/memberships/' + membershipId]"
+    >
+      <mat-icon>arrow_back</mat-icon> Back to Membership
+    </button>
+  </div>
+  <div class="full-width" fxLayout="row"  [@animate]="{ value: '*', params: { y: '50px', delay: '150ms' } }">
+    <mat-card fxFlex="100" class="p-0" *ngIf="membershipReady">
+      <mat-card-title class="">
+        <div
+          class="card-title-text"
+          *ngIf="editMode && this.membership.hasOwnProperty('name')"
+        >
+          <h1>{{ membership?.name }}</h1>
+        </div>
+        <div
+          class="card-title-text"
+          *ngIf="editMode && !this.membership.hasOwnProperty('name')"
+        >
+          <h1>{{ membership?._id }}</h1>
+        </div>
+        <div *ngIf="!editMode" class="card-title-text">
+          <h1>New membership</h1>
+        </div>
+        <mat-divider></mat-divider>
+      </mat-card-title>
+      <mat-card-content>
+        <form [formGroup]="membershipForm">
+          <div fxLayout="row wrap">
+            <div fxFlex="100" fxLayout="row wrap">
+              <div fxFlex="100">
+                <h2>Membership</h2>
+              </div>
+            </div>
+            <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+              <div class="pb-1">
+                <mat-form-field class="full-width">
+                  <input
+                    matInput
+                    name="name"
+                    formControlName="name"
+                    placeholder="Membership Name (Min Length: 4, Max Length: 9)"
+                  />
+                </mat-form-field>
+              </div>
+            </div>
+            <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+              <div class="pb-1">
+                <mat-form-field class="full-width">
+                  <input
+                    matInput
+                    name="description"
+                    formControlName="description"
+                    placeholder="Description"
+                  />
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+          <div fxLayout="row wrap">
+            <div fxFlex="100" fxLayout="row wrap">
+              <div fxFlex="100">
+                <h2>Plans</h2>
+              </div>
+              <div fxFlex="100">
+                <button mat-button (click)="addPlanToMembership()">
+                  Add Plan
+                </button>
+              </div>
+            </div>
+            <div fxFlex="100" fxLayout="column" formArrayName="plans">
+              <div
+                *ngFor="
+                  let plan of plansArray.controls;
+                  let i = index
+                "
+                [formGroupName]="i"
+                fxLayout="row wrap"
+                class="full-width"
+              >
+                <div fxFlex="100" fxFlex.gt-xs="48" class="pr-1">
+                  <div class="pb-1">
+                    <mat-form-field class="full-width">
+                      <input
+                        matInput
+                        type="text"
+                        formControlName="name"
+                        placeholder="Plan Name"
+                        required
+                      />
+                    </mat-form-field>
+                  </div>
+                </div>
+                <div fxFlex="100" fxFlex.gt-xs="48" class="pr-1">
+                  <div class="pb-1">
+                    <mat-form-field class="full-width">
+                      <input
+                        matInput
+                        type="number"
+                        formControlName="amount"
+                        placeholder="Amount"
+                        required
+                      />
+                    </mat-form-field>
+                  </div>
+                </div>
+                <div fxFlex="100" fxFlex.gt-xs="48" class="pr-1">
+                  <div class="pb-1">
+                    <mat-form-field class="full-width pt-1 pb-1">
+                      <mat-label>Interval</mat-label>
+                      <mat-select formControlName="interval">
+                        <mat-option [value]="'day'"> Day </mat-option>
+                        <mat-option [value]="'week'"> Week </mat-option>
+                        <mat-option [value]="'month'"> Month </mat-option>
+                        <mat-option [value]="'year'"> Year </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+                </div>
+                <div fxFlex="100" fxFlex.gt-xs="48" class="pr-1">
+                  <div class="pb-1">
+                    <mat-form-field class="full-width">
+                      <input
+                        matInput
+                        type="number"
+                        formControlName="intervalCount"
+                        placeholder="Interval Count"
+                        required
+                      />
+                    </mat-form-field>
+                  </div>
+                </div>
+                <div fxFlex="100" fxFlex.gt-xs="48" class="pr-1">
+                  <div class="pb-1">
+                    <mat-slide-toggle formControlName="status"
+                      >Plan Active</mat-slide-toggle
+                    >
+                  </div>
+                </div>
+                <button
+                mat-icon-button
+                type="button"
+                color="primary"
+                (click)="removePlanFromMembership()"
+              >
+                <mat-icon>clear</mat-icon>
+              </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </mat-card-content>
+      <mat-card-actions class="p-1">
+        <button
+          mat-button
+          color="primary"
+          [disabled]="membershipForm.invalid"
+          (click)="submitForm()"
+        >
+          Submit
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

@@ -1,0 +1,86 @@
+<div
+  fxLayout="column"
+  fxLayoutGap="10px"
+  style="padding: 10px"
+  *ngIf="newsReady"
+>
+  <!-- Button Row -->
+  <div
+    fxLayout="row"
+    fxLayout.lt-sm="column"
+    [@animate]="{ value: '*', params: { y: '50px', delay: '50ms' } }"
+    style="padding: 10px 10px 0px 10px"
+  >
+    <button mat-button color="primary" routerLink="/news/new">
+      <mat-icon>add</mat-icon> New News Article
+    </button>
+  </div>
+  <!-- News List -->
+  <div fxLayout="row wrap">
+    <!-- Product Box -->
+    <div
+      *ngFor="
+        let news of news
+          | paginate: { itemsPerPage: 9, currentPage: currentPage };
+        let i = index
+      "
+      [@animate]="{
+        value: '*',
+        params: { delay: i * 20 + 100 + 'ms', y: '50px' }
+      }"
+      fxFlex="100"
+      fxFlex.gt-sm="33"
+      fxFlex.sm="50"
+      style="padding: 10px 10px 10px 10px"
+    >
+      <mat-card class="user-card" [routerLink]="['/news/' + news._id]">
+        <mat-card-title>
+          <div class="card-title-text">
+            <h2>{{ news.title }}</h2>
+          </div>
+        </mat-card-title>
+        <mat-card-content>
+          <!-- member detail lines-->
+          <div class="member-details">
+            <mat-divider></mat-divider>
+            <div
+              fxLayout="column"
+              fxLayoutAlign="space-between center"
+              fxLayoutGap="10px"
+            >
+              <div
+                class="full-width"
+                fxLayout="row"
+                fxLayoutAlign="start center"
+              >
+                <mat-icon class="text-muted">date_range</mat-icon>
+                <span fxFlex="10px"></span>
+                {{ news?.creationDate | date: "longDate" }}
+              </div>
+                            <div
+                class="full-width"
+                fxLayout="row"
+                fxLayoutAlign="start center"
+              >
+                <mat-icon class="text-muted"></mat-icon>
+                <span fxFlex="10px"></span>
+                {{ news?.subtitle }}
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <!-- End Product -->
+
+    <div
+      class="products-pagination"
+      fxFlex="100"
+      style="text-align: center; padding: 0"
+    >
+      <pagination-controls
+        (pageChange)="currentPage = $event"
+      ></pagination-controls>
+    </div>
+  </div>
+</div>

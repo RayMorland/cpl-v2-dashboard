@@ -1,0 +1,370 @@
+<div *ngIf="!loaderOpen">
+  <h1 *ngIf="!editMode" style="margin-bottom: 20px;">
+    <b>New Result</b>
+  </h1>
+  <h1 *ngIf="editMode" style="margin-bottom: 20px;">
+    <b>Update Result</b>
+  </h1>
+  <mat-card-content>
+    <form [formGroup]="resultForm">
+      <div fxLayout="row wrap" fxLayout.lt-sm="column">
+        <!-- Personal Info -->
+        <div fxFlex="100" fxLayout="row wrap">
+          <div fxFlex="100">
+            <h2><b>Registration Info</b></h2>
+          </div>
+          <!-- Member -->
+          <div fxFlex="100" class="pr-1 pb-1">
+            <mat-form-field class="full-width">
+              <input
+                type="text"
+                placeholder="Registration"
+                aria-label="Registration"
+                matInput
+                formControlName="registration"
+                [matAutocomplete]="auto"
+              />
+              <mat-autocomplete
+                #auto="matAutocomplete"
+                [displayWith]="displayFn.bind(this)"
+              >
+                <mat-option
+                  *ngFor="let registration of filteredRegistrations | async"
+                  [value]="registration"
+                >
+                  {{ registration?.name }}
+                  <span style="font-size: 12px">(id:{{ registration?._id }})</span>
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+            <small
+              *ngIf="registrationControl.errors?.required && registrationControl.dirty"
+              class="form-error-msg"
+            >
+              Registration is Required
+            </small>
+            <small
+              *ngIf="registrationControl.errors?.notRegistration && registrationControl.touched"
+              class="form-error-msg"
+            >
+              Must select registration from list
+            </small>
+          </div>
+        </div>
+        <!-- Competition Info -->
+        <div fxFlex="100" fxLayout="row wrap">
+          <div fxFlex="100">
+            <h2><b>Competition Info</b></h2>
+          </div>
+          <!-- Category -->
+          <div
+            fxLayour="row wrap"
+            fxFlex="100"
+            fxFlex.gt-xs="50"
+            class="pr-1 pb-1"
+          >
+            <mat-form-field class="full-width">
+              <mat-label>Category</mat-label>
+              <mat-select
+                matNativeControl
+                name="Category"
+                formControlName="category"
+              >
+                <mat-option
+                  *ngFor="let category of league.categories"
+                  [value]="category"
+                  >{{ category }}</mat-option
+                >
+              </mat-select>
+            </mat-form-field>
+            <small
+              *ngIf="
+                (categoryControl.errors?.required && categoryControl.touched) ||
+                (categoryControl.errors?.required && submitPressed)
+              "
+              class="form-error-msg"
+            >
+              Category is Required
+            </small>
+          </div>
+          <!-- Weigh In Weight -->
+          <div
+            fxLayour="row wrap"
+            fxFlex="100"
+            fxFlex.gt-xs="50"
+            class="pr-1 pb-1"
+          >
+            <mat-form-field class="full-width">
+              <mat-label>Weight at Weigh In</mat-label>
+              <input
+                matInput
+                type="text"
+                placeholder="Weight at Weigh In"
+                formControlName="weightAtWeighIn"
+              />
+            </mat-form-field>
+            <small
+              *ngIf="
+                (weightAtWeighInControl.errors?.required &&
+                  weightAtWeighInControl.touched) ||
+                (weightAtWeighInControl.errors?.required && submitPressed)
+              "
+              class="form-error-msg"
+            >
+              Weight at weigh in is Required
+            </small>
+          </div>
+          <!-- Tests -->
+          <div
+            fxLayout="row wrap"
+            fxFlex="100"
+            fxFlex.gt-xs="50"
+            class="pr-1 pb-1"
+          >
+            <mat-form-field class="full-width">
+              <mat-label>Test</mat-label>
+              <mat-select
+                matNativeControl
+                name="Test"
+                formControlName="testing"
+              >
+                <mat-option
+                  *ngFor="let test of meet.eventInfo.testing"
+                  [value]="test.type"
+                  >{{ test.type }}</mat-option
+                >
+              </mat-select>
+            </mat-form-field>
+            <small
+              *ngIf="
+                (testingControl.errors?.required && testingControl.touched) ||
+                (testingControl.errors?.required && submitPressed)
+              "
+              class="form-error-msg"
+            >
+              Test is Required
+            </small>
+          </div>
+          <!-- Divisions -->
+          <div
+            fxLayout="row wrap"
+            fxFlex="100"
+            class="pr-1 pb-1"
+            formArrayName="divisions"
+          >
+            <div fxFlex="100">
+              <h3>Divisions</h3>
+            </div>
+            <div
+              fxFlex
+              *ngFor="let division of league.divisions; let i = index"
+            >
+              <mat-checkbox [formControlName]="i">
+                {{ division.name }} ({{ division.ageClasses[0].min }} -
+                {{ division.ageClasses[division.ageClasses.length - 1].max }})
+              </mat-checkbox>
+            </div>
+            <div class="full-width">
+              <small
+                *ngIf="
+                  divisionsControl.errors?.atLeastOneSelected ||
+                  (divisionsControl.errors?.required && submitPressed)
+                "
+                class="form-error-msg"
+              >
+                At least one division must be selected
+              </small>
+            </div>
+          </div>
+          <!-- Events -->
+          <div fxLayout="column" fxFlex="100" formArrayName="events">
+            <div fxFlex="100">
+              <h3>Events</h3>
+            </div>
+            <div
+              class="full-width"
+              fxLayout="column"
+              fxLayoutAlign="start start"
+              *ngFor="let lift of meet.eventInfo.events; let i = index"
+            >
+              <div
+                fxLayout="row"
+                fxLayoutAlign="space-between center"
+                class="full-width"
+              >
+                <mat-checkbox fxFlex="50" [formControlName]="i">
+                  {{ lift.type }}
+                </mat-checkbox>
+              </div>
+            </div>
+            <div class="full-width">
+              <small
+                *ngIf="eventsControl.errors?.atLeastOneSelected"
+                class="form-error-msg"
+              >
+                At least one event must be selected
+              </small>
+            </div>
+          </div>
+
+          <!--  -->
+        </div>
+        <!-- Lifts -->
+        <div fxFlex="100" fxLayout="row wrap" class="mt-1">
+          <div fxFlex="100">
+            <h2><b>Lifts</b></h2>
+          </div>
+          <div fxFlex="100" formArrayName="lifts">
+            <div
+              *ngFor="let lift of liftsControl.controls; let i = index"
+              [formGroupName]="i"
+              class="mt-1"
+            >
+              <div fxLayout="row">
+                <div fxFlex="10">
+                  <h3>
+                    {{ liftsControl.controls[i].controls.liftType.value }}
+                  </h3>
+                </div>
+                <div fxFlex="90" fxLayout="row wrap">
+                  <!-- Rack Position -->
+                  <div fxFlex="50" class="pr-1">
+                    <div class="pb-1">
+                      <mat-form-field class="full-width">
+                        <mat-label>Rack Position</mat-label>
+                        <mat-select
+                          matNativeControl
+                          name="rackPosition"
+                          formControlName="rackPosition"
+                          required
+                        >
+                          <mat-option [value]="'in'"> In </mat-option>
+                          <mat-option [value]="'out'"> Out </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                  <!-- Rack Height -->
+                  <!-- Starting Height -->
+                  <!-- Attempt 1 -->
+                  <div fxFlex="50" class="pr-1">
+                    <div formGroupName="attempt1">
+                      <div class="pb-1">
+                        <mat-form-field fxFlex="50" class="full-width">
+                          <input
+                            type="number"
+                            placeholder="Weight"
+                            aria-label="Weight"
+                            matInput
+                            formControlName="weight"
+                            min="0"
+                          />
+                        </mat-form-field>
+                        <mat-checkbox fxFlex="50" formControlName="success">
+                          Success
+                        </mat-checkbox>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Attempt 2 -->
+                  <div fxFlex="50" class="pr-1">
+                    <div formGroupName="attempt2">
+                      <div class="pb-1">
+                        <mat-form-field class="full-width">
+                          <input
+                            fxFlex="50"
+                            type="number"
+                            placeholder="Weight"
+                            aria-label="Weight"
+                            matInput
+                            formControlName="weight"
+                            [disabled]="!liftsControl.controls[i].get('attempt1').valid"
+                          />
+                        </mat-form-field>
+                        <mat-checkbox [disabled]="!liftsControl.controls[i].get('attempt1').valid" fxFlex="50" formControlName="success">
+                          Success
+                        </mat-checkbox>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Attempt 3 -->
+                  <div fxFlex="50" class="pr-1">
+                    <div formGroupName="attempt3">
+                      <div class="pb-1">
+                        <mat-form-field class="full-width">
+                          <input
+                            fxFlex="50"
+                            type="number"
+                            placeholder="Weight"
+                            aria-label="Weight"
+                            matInput
+                            formControlName="weight"
+                            [disabled]="!liftsControl.controls[i].get('attempt2').valid"
+                          />
+                        </mat-form-field>
+                        <mat-checkbox [disabled]="!liftsControl.controls[i].get('attempt2').valid" fxFlex="50" formControlName="success">
+                          Success
+                        </mat-checkbox>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Remove Lift -->
+                  <!-- <div
+                  fxFlex="10%"
+                  fxLayout="row"
+                  fxLAyoutAlign="end center"
+                  class=""
+                >
+                  <div class="pb-1">
+                    <button
+                      mat-icon-button
+                      type="button"
+                      color="primary"
+                      (click)="removeLift(i)"
+                    >
+                      <mat-icon>clear</mat-icon>
+                    </button>
+                  </div>
+                </div> -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </mat-card-content>
+
+  <!-- Button Row -->
+  <mat-dialog-actions>
+    <div (click)="submitPressed = true">
+      <button
+        mat-button
+        color="primary"
+        [disabled]="resultForm.invalid"
+        (click)="submitForm(); submitPressed = true"
+      >
+        <span *ngIf="!editMode">Add Result</span>
+        <span *ngIf="editMode">Update Result</span>
+      </button>
+    </div>
+    <span fxFlex="20px"></span>
+    <button
+      mat-button
+      color="warn"
+      type="button"
+      (click)="dialogRef.close(false)"
+    >
+      Cancel
+    </button>
+  </mat-dialog-actions>
+</div>
+<div *ngIf="loaderOpen" class="spinner-wrapper" fxLayoutAlign="center center">
+  <mat-progress-spinner
+    class="example-margin"
+    [color]="warn"
+    [mode]="'indeterminate'"
+    [value]="75"
+  >
+  </mat-progress-spinner>
+</div>

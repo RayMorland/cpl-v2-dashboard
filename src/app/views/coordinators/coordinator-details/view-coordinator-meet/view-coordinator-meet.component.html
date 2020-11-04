@@ -1,0 +1,29 @@
+<div *ngIf="!loaderOpen">
+  <h2 style="font-size: 30px" class="mb-1">
+    <b>Meet</b>
+  </h2>
+  <mat-card-content>
+
+  </mat-card-content>
+
+  <!-- Button Row -->
+  <mat-dialog-actions>
+    <button
+      mat-button
+      color="warn"
+      type="button"
+      (click)="dialogRef.close(false)"
+    >
+      Cancel
+    </button>
+  </mat-dialog-actions>
+</div>
+<div *ngIf="loaderOpen" class="spinner-wrapper" fxLayoutAlign="center center">
+  <mat-progress-spinner
+    class="example-margin"
+    [color]="warn"
+    [mode]="'indeterminate'"
+    [value]="75"
+  >
+  </mat-progress-spinner>
+</div>

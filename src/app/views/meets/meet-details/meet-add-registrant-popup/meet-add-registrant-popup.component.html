@@ -1,0 +1,561 @@
+<div *ngIf="meetReady">
+  <h2 *ngIf="data.title == 'new'" style="font-size: 30px" class="mb-1">
+    <b>New Registrant</b>
+  </h2>
+  <h2 *ngIf="data.title == 'update'" style="font-size: 30px" class="mb-1">
+    <b>Update Registrant</b>
+  </h2>
+  <mat-card-content>
+    <form [formGroup]="registrationForm">
+      <div fxLayout="row wrap" fxLayout.lt-sm="column">
+        <!-- Personal Info -->
+        <div fxFlex="100" fxLayout="row wrap">
+          <div fxFlex="100">
+            <h2><b>Personal Info</b></h2>
+          </div>
+          <div fxFlex="100" class="pr-1 pb-1">
+            <mat-form-field class="full-width">
+              <input
+                type="text"
+                placeholder="Member"
+                aria-label="Member"
+                matInput
+                formControlName="member"
+                [matAutocomplete]="auto"
+              />
+              <mat-autocomplete
+                #auto="matAutocomplete"
+                [displayWith]="displayFn.bind(this)"
+              >
+                <mat-option
+                  *ngFor="let member of filteredMembers | async"
+                  [value]="member"
+                >
+                  {{ member?.personal?.firstName }}
+                  {{ member?.personal?.lastName }}
+                  <span style="font-size: 12px">(id:{{ member?._id }})</span>
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+            <small
+              *ngIf="memberControl.errors?.required && memberControl.dirty"
+              class="form-error-msg"
+            >
+              Member is Required
+            </small>
+            <small
+              *ngIf="memberControl.errors?.notMember && memberControl.touched"
+              class="form-error-msg"
+            >
+              Must select member from list
+            </small>
+          </div>
+          <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1 pb-1">
+            <mat-form-field class="full-width">
+              <input
+                matInput
+                type="text"
+                formControlName="email"
+                placeholder="Email"
+                required
+              />
+            </mat-form-field>
+            <small
+              *ngIf="emailControl.errors?.required && emailControl.dirty"
+              class="form-error-msg"
+            >
+              Email is Required
+            </small>
+          </div>
+          <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1 pb-1">
+            <mat-form-field class="full-width">
+              <input
+                matInput
+                type="date"
+                formControlName="dateOfBirth"
+                placeholder="Date of Birth"
+                required
+              />
+            </mat-form-field>
+            <small
+              *ngIf="
+                dateOfBirthControl.errors?.required && dateOfBirthControl.dirty
+              "
+              class="form-error-msg"
+            >
+              Date of birth is Required
+            </small>
+          </div>
+          <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1 pb-1">
+            <mat-form-field class="full-width">
+              <mat-label>Gender</mat-label>
+              <mat-select
+                matNativeControl
+                name="gender"
+                formControlName="gender"
+              >
+                <mat-option
+                  *ngFor="let gender of league.genders"
+                  [value]="gender.name"
+                  >{{ gender.name }}</mat-option
+                >
+              </mat-select>
+            </mat-form-field>
+            <small
+              *ngIf="genderControl.errors?.required && genderControl.dirty"
+              class="form-error-msg"
+            >
+              Gender is Required
+            </small>
+          </div>
+        </div>
+        <!--  Address info -->
+        <div formGroupName="address" fxFlex="100" fxLayout="row wrap">
+          <div fxFlex="100">
+            <h2><b>Address Info</b></h2>
+          </div>
+          <div fxFlex="100" fxLayout="row wrap">
+            <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1 pb-1">
+              <mat-form-field class="full-width">
+                <input
+                  matInput
+                  type="text"
+                  formControlName="street"
+                  placeholder="Street"
+                  required
+                />
+              </mat-form-field>
+              <small
+                *ngIf="streetControl.errors?.required && streetControl.dirty"
+                class="form-error-msg"
+              >
+                Street is Required
+              </small>
+            </div>
+            <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1 pb-1">
+              <mat-form-field class="full-width">
+                <input
+                  matInput
+                  type="text"
+                  formControlName="city"
+                  placeholder="City"
+                  required
+                />
+              </mat-form-field>
+              <small
+                *ngIf="cityControl.errors?.required && cityControl.dirty"
+                class="form-error-msg"
+              >
+                City is Required
+              </small>
+            </div>
+            <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1 pb-1">
+              <mat-form-field class="full-width">
+                <mat-label>Province</mat-label>
+                <mat-select
+                  matNativeControl
+                  name="province"
+                  formControlName="province"
+                >
+                  <mat-option
+                    *ngFor="let province of platformService.provinces"
+                    [value]="province"
+                    >{{ province }}</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+              <small
+                *ngIf="
+                  provinceControl.errors?.required && provinceControl.dirty
+                "
+                class="form-error-msg"
+              >
+                Province is Required
+              </small>
+            </div>
+            <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1 pb-1">
+              <mat-form-field class="full-width">
+                <mat-label>Country</mat-label>
+                <mat-select
+                  matNativeControl
+                  name="country"
+                  formControlName="country"
+                >
+                  <mat-option
+                    *ngFor="let country of platformService.countries"
+                    [value]="country"
+                    >{{ country }}</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+              <small
+                *ngIf="countryControl.errors?.required && countryControl.dirty"
+                class="form-error-msg"
+              >
+                Country is Required
+              </small>
+            </div>
+            <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1 pb-1">
+              <mat-form-field class="full-width">
+                <input
+                  matInput
+                  name="postal"
+                  formControlName="postal"
+                  placeholder="Postal Code"
+                />
+              </mat-form-field>
+              <small
+                *ngIf="postalControl.errors?.required && postalControl.dirty"
+                class="form-error-msg"
+              >
+                Postal is Required
+              </small>
+            </div>
+          </div>
+        </div>
+        <!-- Competition Info -->
+        <div fxFlex="100" fxLayout="row wrap" formGroupName="competitionInfo">
+          <div fxFlex="100">
+            <h2><b>Competition Info</b></h2>
+          </div>
+          <!-- Weight Class -->
+          <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1 pb-1">
+            <mat-form-field class="full-width">
+              <mat-label>Weight Class</mat-label>
+              <mat-select
+                matNativeControl
+                name="Weight Class"
+                formControlName="weightClass"
+                [disabled]="!genderControl.valid && !genderControl.disabled"
+              >
+                <mat-option
+                  *ngFor="let weightClass of weightClassOptions | async"
+                  [value]="weightClass.name"
+                  >{{ weightClass.name }} -
+                  {{ weightClass.weight }}Kg</mat-option
+                >
+              </mat-select>
+            </mat-form-field>
+            <small
+              *ngIf="
+                (weightClassControl.errors?.required &&
+                  weightClassControl.touched) ||
+                (weightClassControl.errors?.required && submitPressed)
+              "
+              class="form-error-msg"
+            >
+              Weight Class is Required
+            </small>
+          </div>
+          <!-- Category -->
+          <div
+            fxLayour="row wrap"
+            fxFlex="100"
+            fxFlex.gt-xs="50"
+            class="pr-1 pb-1"
+          >
+            <mat-form-field class="full-width">
+              <mat-label>Category</mat-label>
+              <mat-select
+                matNativeControl
+                name="Category"
+                formControlName="category"
+              >
+                <mat-option
+                  *ngFor="let category of league.categories"
+                  [value]="category"
+                  >{{ category }}</mat-option
+                >
+              </mat-select>
+            </mat-form-field>
+            <small
+              *ngIf="
+                (categoryControl.errors?.required && categoryControl.touched) ||
+                (categoryControl.errors?.required && submitPressed)
+              "
+              class="form-error-msg"
+            >
+              Category is Required
+            </small>
+          </div>
+          <!-- Tests -->
+          <div
+            fxLayout="row wrap"
+            fxFlex="100"
+            fxFlex.gt-xs="50"
+            class="pr-1 pb-1"
+          >
+            <mat-form-field class="full-width">
+              <mat-label>Test</mat-label>
+              <mat-select matNativeControl name="Test" formControlName="test">
+                <mat-option
+                  *ngFor="let test of meet.eventInfo.testing"
+                  [value]="test.type"
+                  >{{ test.type }}</mat-option
+                >
+              </mat-select>
+            </mat-form-field>
+            <small
+              *ngIf="
+                (testControl.errors?.required && testControl.touched) ||
+                (testControl.errors?.required && submitPressed)
+              "
+              class="form-error-msg"
+            >
+              Test is Required
+            </small>
+          </div>
+          <!-- Divisions -->
+          <div
+            fxLayout="row wrap"
+            fxFlex="100"
+            class="pr-1 pb-1"
+            formArrayName="divisions"
+          >
+            <div fxFlex="100">
+              <h3>Divisions</h3>
+            </div>
+            <div
+              fxFlex
+              *ngFor="let division of league.divisions; let i = index"
+            >
+              <mat-checkbox [formControlName]="i">
+                {{ division.name }} ({{ division.ageClasses[0].min }} -
+                {{ division.ageClasses[division.ageClasses.length - 1].max }})
+              </mat-checkbox>
+            </div>
+            <div class="full-width">
+              <small
+                *ngIf="
+                  divisionsControl.errors?.atLeastOneSelected ||
+                  (divisionsControl.errors?.required && submitPressed)
+                "
+                class="form-error-msg"
+              >
+                At least one division must be selected
+              </small>
+            </div>
+          </div>
+          <!-- Meet Events and Lifts -->
+          <div fxFlex="100" fxLayout="row wrap" style="padding-bottom: 20px">
+            <!-- Events -->
+            <div
+              fxLayout="row wrap"
+              fxFlex="100"
+              class="pr-1 pb-1"
+              formArrayName="events"
+            >
+              <div fxFlex="100">
+                <h3>Events</h3>
+              </div>
+              <div
+                fxFlex
+                *ngFor="let event of meet.eventInfo.events; let i = index"
+              >
+                <mat-checkbox [formControlName]="i">
+                  {{ event.type }}
+                </mat-checkbox>
+              </div>
+              <div class="full-width">
+                <small
+                  *ngIf="
+                    eventsControl.errors?.atLeastOneSelected ||
+                    (eventsControl.errors?.atLeastOneSelected && submitPressed)
+                  "
+                  class="form-error-msg"
+                >
+                  At least one event must be selected
+                </small>
+              </div>
+            </div>
+            <!-- Lifts -->
+            <div
+              *ngIf="eventsControl.value.includes(true)"
+              fxFlex="100"
+              fxLayout="row wrap"
+              class="mt-1"
+            >
+              <div fxFlex="100">
+                <h2><b>Lifts</b></h2>
+              </div>
+              <div fxFlex="100" formArrayName="lifts">
+                <div
+                  *ngFor="let lift of liftsControl.controls; let i = index"
+                  [formGroupName]="i"
+                  class="mt-1"
+                >
+                  <div fxLayout="row">
+                    <div fxFlex="10">
+                      <h3>
+                        {{ liftsControl.controls[i].controls.liftType.value }}
+                      </h3>
+                    </div>
+                    <div fxFlex="90" fxLayout="row wrap">
+                      <!-- Rack Position -->
+                      <div
+                        *ngIf="
+                          liftsControl.controls[i].controls.liftType.value !=
+                          'bench'
+                        "
+                        fxFlex="50"
+                        class="pr-1"
+                      >
+                        <div class="pb-1">
+                          <mat-form-field class="full-width">
+                            <mat-label>Rack Position</mat-label>
+                            <mat-select
+                              matNativeControl
+                              name="rackPosition"
+                              formControlName="rackPosition"
+                              required
+                            >
+                              <mat-option [value]="'in'"> In </mat-option>
+                              <mat-option [value]="'out'"> Out </mat-option>
+                            </mat-select>
+                          </mat-form-field>
+                        </div>
+                      </div>
+                      <!-- Rack Height -->
+                      <div fxFlex="50" class="pr-1">
+                        <div class="pb-1">
+                          <mat-form-field class="full-width">
+                            <mat-label>Rack Height</mat-label>
+                            <input
+                              matInput
+                              name="Rack Height"
+                              formControlName="rackHeight"
+                              required
+                              type="number"
+                            />
+                          </mat-form-field>
+                        </div>
+                      </div>
+                      <!-- Safety Height -->
+                      <div fxFlex="50" class="pr-1">
+                        <div class="pb-1">
+                          <mat-form-field class="full-width">
+                            <mat-label>Safety Height</mat-label>
+                            <input
+                              matInput
+                              name="Safety Height"
+                              formControlName="safetyHeight"
+                              required
+                              type="number"
+                            />
+                          </mat-form-field>
+                        </div>
+                      </div>
+                      <!-- Opening Weight -->
+                      <div fxFlex="50" class="pr-1">
+                        <mat-form-field fxFlex="50" class="full-width">
+                          <input
+                            type="number"
+                            placeholder="Weight"
+                            aria-label="Weight"
+                            matInput
+                            formControlName="openingWeight"
+                          />
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Fees -->
+        <div fxFlex="100" fxLayout="row wrap" formGroupName="fees">
+          <!-- Merchandise -->
+          <div fxLayout="row wrap" fxFlex="100" class="pr-1 pb-1">
+            <div fxFlex="100">
+              <h2><b>Merchandise</b></h2>
+            </div>
+            <div
+              fxLayout="row wrap"
+              fxFlex="100"
+              fxFlex.gt-xs="50"
+              class="pr-1 pb-1"
+              formArrayName="merchandise"
+            >
+              <div
+                fxFlex="100"
+                *ngFor="let merch of meet.merchandise; let i = index"
+              >
+                <mat-checkbox [formControlName]="i">
+                  {{ merch.item }} - ${{ merch.price }}
+                </mat-checkbox>
+              </div>
+            </div>
+          </div>
+          <!-- Extra Fees -->
+          <div
+            fxLayout="row wrap"
+            fxFlex="100"
+            fxFlex.gt-xs="50"
+            class="pr-1 pb-1"
+          >
+            <div fxFlex="100">
+              <h2><b>Extra Fees</b></h2>
+            </div>
+            <mat-checkbox formControlName="recordCertificate">
+              Record Certificate - $50
+            </mat-checkbox>
+          </div>
+          <!-- Fees Paid -->
+          <div
+            fxLayout="row wrap"
+            fxFlex="100"
+            fxFlex.gt-xs="50"
+            class="pr-1 pb-1"
+          >
+            <div fxFlex="100">
+              <h2><b>Fees Paid</b></h2>
+            </div>
+            <mat-slide-toggle formControlName="feesPaid"
+              >Fees Paid</mat-slide-toggle
+            >
+          </div>
+        </div>
+      </div>
+    </form>
+    <div fxLayout="row">
+      <div fxFlex="100" style="margin-top: 20px">
+        <h2>
+          <b>Total: ${{ registrationTotal }}</b>
+        </h2>
+      </div>
+    </div>
+  </mat-card-content>
+  <!-- Button Row -->
+  <mat-dialog-actions>
+    <div (click)="submitPressed = true">
+      <button
+        mat-button
+        color="primary"
+        [disabled]="registrationForm.invalid"
+        (click)="submitForm()"
+      >
+        Add Registrant
+      </button>
+    </div>
+    <span fxFlex></span>
+    <button
+      mat-button
+      color="warn"
+      type="button"
+      (click)="dialogRef.close(false)"
+    >
+      Cancel
+    </button>
+  </mat-dialog-actions>
+</div>
+<div *ngIf="!meetReady" class="spinner-wrapper" fxLayoutAlign="center center">
+  <mat-progress-spinner
+    class="example-margin"
+    [color]="warn"
+    [mode]="'indeterminate'"
+    [value]="75"
+  >
+  </mat-progress-spinner>
+</div>

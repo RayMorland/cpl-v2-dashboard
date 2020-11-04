@@ -1,0 +1,31 @@
+<mat-card class="p-0" *ngIf="coordinatorObs | async as coordinators; else loading">
+    <mat-card-title class="">
+      <div *ngIf="editMode && this.coordinator.hasOwnProperty('name')" class="card-title-text">{{ coordinator.name }}</div>
+      <div *ngIf="editMode && !this.coordinator.hasOwnProperty('name')" class="card-title-text">{{ coordinator._id }}</div>
+      <div *ngIf="!editMode" class="card-title-text">New coordinator</div>
+      <mat-divider></mat-divider>
+    </mat-card-title>
+    <mat-card-content>
+      <form [formGroup]="generalInfoGroup">
+        <div fxLayout="row wrap">
+          <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+            <div class="pb-1">
+              <mat-form-field class="full-width">
+                <input matInput name="name" formControlName="name" placeholder="name (Min Length: 4, Max Length: 9)"
+                  value="">
+              </mat-form-field>
+              <small *ngIf="generalInfoGroup.controls['name'].hasError('minlength') && generalInfoGroup.controls['name'].touched"
+                class="form-error-msg"> name require at least
+                {{generalInfoGroup.controls['name'].errors.minlength.requiredLength}} characters </small>
+              <small *ngIf="generalInfoGroup.controls['name'].hasError('maxlength') && generalInfoGroup.controls['name'].touched"
+                class="form-error-msg"> name can not contain more than
+                {{generalInfoGroup.controls['name'].errors.maxlength.requiredLength}} characters </small>
+            </div>
+          </div>
+        </div>
+      </form>
+      <button mat-raised-button color="primary" [disabled]="generalInfoGroup.invalid">Submit</button>
+    </mat-card-content>
+  </mat-card>
+
+<div #loading></div>

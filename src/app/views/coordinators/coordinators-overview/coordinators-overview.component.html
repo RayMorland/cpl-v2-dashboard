@@ -1,0 +1,159 @@
+<div fxLayout="row" fxLayout.lt-sm="column" class="shop-top-toolbar" [@animate]="{value:'*',params:{scale:'.9',delay:'300ms'}}">
+  <button mat-raised-button color="primary" routerLink="/coordinators/new">
+    <mat-icon>add</mat-icon> New Coordinator
+  </button>
+  <span fxFlex="10px"></span>
+  <button mat-raised-button color="primary" routerLink="/coordinators/list">
+    <mat-icon>list</mat-icon> Coordinator List
+  </button>
+</div>
+
+<div fxLayout="row wrap">
+  <div fxFlex="100" fxFlex.gt-sm="25" fxFlex.sm="50" [@animate]="{value:'*',params:{scale:'.9',delay:'300ms'}}">
+    <mat-card>
+      <mat-card-title fxLayoutAlign="start center">
+        <small class="text-muted">New Coordinators This Month</small>
+        <span fxFlex></span>
+        <mat-chip class="icon-chip" color="accent" selected="true">
+          <mat-icon>trending_up</mat-icon>9%
+        </mat-chip>
+      </mat-card-title>
+      <mat-card-content>
+        <h3 class="m-0 font-normal">2</h3>
+        <small class="text-muted">Monthly</small>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div fxFlex="100" fxFlex.gt-sm="25" fxFlex.sm="50" [@animate]="{value:'*',params:{delay:'300ms',scale:'.9'}}">
+    <mat-card>
+      <mat-card-title>
+        <small class="text-muted">New Coordinators This Year</small>
+        <span fxFlex></span>
+        <mat-chip class="icon-chip" color="accent" selected="true">
+          <mat-icon>trending_up</mat-icon>9%
+        </mat-chip>
+      </mat-card-title>
+      <mat-card-content>
+        <h3 class="m-0 font-normal">377,670</h3>
+        <small class="text-muted">Monthly</small>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div fxFlex="100" fxFlex.gt-sm="25" fxFlex.sm="50" [@animate]="{value:'*',params:{delay:'300ms',scale:'.9'}}">
+    <mat-card>
+      <mat-card-title>
+        <small class="text-muted">Total Coordinators</small>
+        <span fxFlex></span>
+        <mat-chip class="icon-chip" color="accent" selected="true">
+          <mat-icon>trending_up</mat-icon>9%
+        </mat-chip>
+      </mat-card-title>
+      <mat-card-content>
+        <h3 class="m-0 font-normal">54,845</h3>
+        <small class="text-muted">Monthly</small>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div fxFlex="100" fxFlex.gt-sm="25" fxFlex.sm="50" [@animate]="{value:'*',params:{delay:'300ms',scale:'.9'}}">
+    <mat-card>
+      <mat-card-title>
+        <small class="text-muted">Active Coordinators</small>
+        <span fxFlex></span>
+        <mat-chip class="icon-chip" color="warn" selected="true">
+          <mat-icon>trending_down</mat-icon>2%
+        </mat-chip>
+      </mat-card-title>
+      <mat-card-content>
+        <h3 class="m-0 font-normal">2</h3>
+        <small class="text-muted">Monthly</small>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+
+<!-- Fullwidth chart -->
+<div fxLayout="row wrap" [@animate]="{value:'*',params:{y:'25px',delay:'300ms'}}">
+  <div fxFlex="100">
+    <mat-card class="default">
+      <mat-card-title class="">
+        <span>New Coordinators</span>
+        <span fxFlex></span>
+      </mat-card-title>
+      <mat-card-subtitle>New Coordinator registrations</mat-card-subtitle>
+      <mat-card-content class="p-0" [style.height]="'240px'">
+        <canvas height="240" baseChart class="chart m-0" [datasets]="lineChartSteppedData" [labels]="lineChartLabels"
+          [options]="lineChartOptions" [colors]="lineChartColors" [legend]="lineChartLegend" [chartType]="lineChartType"></canvas>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+
+<div fxLayout="row wrap">
+  <!-- Gallery and chart column -->
+  <div fxFlex="100" fxFlex.gt-sm="33.33" fxLayout="column">
+
+    <mat-card class="p-0" [@animate]="{value:'*',params:{scale:'.9',delay:'300ms'}}">
+      <mat-card-title class="">
+        <div class="card-title-text">
+          <span>Coordinators By Location</span>
+          <span fxFlex></span>
+          <button class="card-control" mat-icon-button [matMenuTriggerFor]="menu2">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu2="matMenu">
+            <button mat-menu-item>
+              <mat-icon>settings</mat-icon>
+              <span>Campaign Settings</span>
+            </button>
+            <button mat-menu-item>
+              <mat-icon>do_not_disturb</mat-icon>
+              <span>Disable All Campaigns</span>
+            </button>
+            <button mat-menu-item>
+              <mat-icon>close</mat-icon>
+              <span>Remove panel</span>
+            </button>
+          </mat-menu>
+        </div>
+        <mat-divider></mat-divider>
+      </mat-card-title>
+      <mat-card-content>
+
+      </mat-card-content>
+    </mat-card>
+
+  </div>
+
+  <!-- ticket and project table column -->
+  <div fxFlex="100" fxFlex.gt-sm="66.66" fxLayout="column wrap">
+    <mat-card class="default" [@animate]="{value:'*',params:{delay:'300ms',y:'50px'}}">
+      <mat-card-title>Coordinators Snapshot Table</mat-card-title>
+      <mat-card-content class="p-0">
+        <mat-list class="compact-list mb-1">
+          <mat-list-item class="" *ngFor="let t of tickets">
+            <img mat-list-avatar class="mr-1" [src]="t.img" alt="">
+            <div fxLayout="row" fxFlex="100">
+              <h6 class="m-0 mr-1">{{t.name}}</h6>
+              <span fxFlex></span>
+              <div fxFlex="40">{{t.text | excerpt:20 }}</div>
+              <span fxFlex></span>
+              <small class="text-muted mr-1">{{ t.date | relativeTime}}</small>
+            </div>
+            <mat-chip mat-sm-chip [color]="'warn'" [selected]="t.isOpen">{{t.isOpen ? 'active' : 'closed'}}</mat-chip>
+          </mat-list-item>
+        </mat-list>
+        <div class="text-center">
+          <button mat-button class="full-width">View all</button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Users Row -->
+    <div fxLayout="row wrap">
+    </div>
+    <!-- End Users Row -->
+  </div>
+  <!-- End tables and users column -->
+</div>

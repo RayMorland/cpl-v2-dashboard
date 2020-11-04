@@ -1,0 +1,17 @@
+::ng-deep .mat-action-row {
+    border-top-color: none !important;
+    border-top-style: none !important;
+    border-top-width: none !important;
+    border-bottom-color: rgba(0, 0, 0, 0.12);
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    padding: 16px 8px 24px 24px;
+  }
+
+  ::ng-deep .mat-expansion-panel-header {
+    padding: 20px 24px !important;
+  }
+
+  h2 {
+      margin: 0;
+  }

@@ -1,0 +1,10 @@
+<div *ngIf="newsReady">
+    <div fxLayout="row" fxLayout.lt-sm="column" class="shop-top-toolbar" [@animate]="{value:'*',params:{scale:'.9',delay:'300ms'}}">
+      <button mat-button color="primary" routerLink="/news/new">
+        <mat-icon>add</mat-icon> New News Item
+      </button>
+      <button mat-button color="primary" routerLink="/news/list">
+        <mat-icon>list</mat-icon> News Items List
+      </button>
+    </div>
+  </div>

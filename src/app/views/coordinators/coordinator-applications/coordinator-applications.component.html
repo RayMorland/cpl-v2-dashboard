@@ -1,0 +1,81 @@
+<div class="shop-wrap" fxLayout="row" fxLayoutWrap="wrap">
+    <!-- Filters -->
+    <!-- Right side -->
+    <div class="full-width">
+      <!-- Search Form -->
+      <div fxLayout="row" fxLayout.lt-sm="column" class="shop-top-toolbar">
+        <button mat-raised-button color="secondary" routerLink="/coordinators">
+          <mat-icon>arrow_back</mat-icon> Coordinators Overview
+        </button>
+        <span fxFlex="10px"></span>
+        <button mat-raised-button color="primary" (click)="openPopUp({}, true)">
+          <mat-icon>add</mat-icon> ADD APPLICATION
+        </button>
+      </div>
+      <!-- Records Search Container -->
+      <mat-card class="p-0">
+        <mat-card-title class="">
+          <div class="card-title-text">Coordinator Applications Search Form</div>
+          <mat-divider></mat-divider>
+        </mat-card-title>
+        <mat-card-content>
+          <form [formGroup]="applicationSearchForm">
+            <div fxLayout="row wrap">
+              <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                <div class="pb-1">
+                  <mat-form-field class="full-width">
+                    <mat-label>Coordinator</mat-label>
+                    <mat-select name="coordinator" formControlName="coordinator">
+                      <mat-option value="all">
+                        All Coordinators
+                      </mat-option>
+                      <mat-option *ngFor="let coordinator of coordinators" [value]="coordinator.name">
+                        {{ coordinator.name }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </div>
+  
+              <div fxFlex="100" fxFlex.gt-xs="100" class="pr-1">
+                <div class="pb-1">
+                  <button mat-raised-button color="primary" (click)="clearSearch()">
+                    <mat-icon>close</mat-icon> CLEAR SEARCH
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+      <!-- All Records Table -->
+  
+      <mat-card class="p-0" [@animate]="{value:'*',params:{y:'50px',delay:'300ms'}}">
+        <mat-card-content class="p-0">
+          <ngx-datatable *ngIf="applicationsReady" class="material ml-0 mr-0" [rows]="refinedApplications" [columnMode]="'force'"
+            [headerHeight]="50" [footerHeight]="50" [scrollbarH]="true" [limit]="10" [rowHeight]="50">
+            <ngx-datatable-column name="Id" [flexGrow]="1">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                {{ row?._id }}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Name" [flexGrow]="1">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ row?.name }}
+                </ng-template>
+              </ngx-datatable-column>
+            <ngx-datatable-column name="Actions" [flexGrow]="1">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                <button mat-icon-button mat-sm-button color="primary" class="mr-1" (click)="openPopUp(row)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button mat-sm-button color="warn" (click)="deleteItem(row)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </ng-template>
+            </ngx-datatable-column>
+          </ngx-datatable>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>

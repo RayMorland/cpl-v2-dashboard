@@ -1,0 +1,1672 @@
+<div *ngIf="meetReady" fxLayout="column" fxLayoutGap="20px" style="padding: 20px" >
+  <!-- Button Row -->
+  <div class="full-width" fxLayout="row" fxLayout.lt-sm="column" [@animate]="{ value: '*', params: { y: '50px', delay: '100ms' } }">
+    <button *ngIf="!editMode" mat-button [routerLink]="['/meets']">
+      <mat-icon>arrow_back</mat-icon> Back to Meets
+    </button>
+    <button *ngIf="editMode" mat-button [routerLink]="['/meets/' + meetId]">
+      <mat-icon>arrow_back</mat-icon> Back to Meet
+    </button>
+  </div>
+  <div class="full-width" fxLayout="row wrap" [@animate]="{ value: '*', params: { y: '50px', delay: '150ms' } }">
+    <div fxFlex="100" fxFlex.gt-sm="100" fxLayout="column">
+      <mat-card class="p-0">
+        <mat-card-title class="" style="margin: 0 !important;">
+          <div *ngIf="editMode" class="card-title-text"><h1><b>{{ meetForm.get("title").value }}</b></h1></div>
+          <div *ngIf="!editMode" class="card-title-text">
+            <b *ngIf="!meetForm.get('title').value.length"><h1>New Meet</h1></b>
+            <b *ngIf="meetForm.get('title').value.length">
+              <h1>{{
+                meetForm.get("title").value
+              }}</h1></b>
+          </div>
+          <mat-divider></mat-divider>
+        </mat-card-title>
+        <mat-card-content style="padding: 0 !important;">
+          <form [formGroup]="meetForm">
+            <mat-accordion class="example-headers-align">
+              <!-- General Info Panel -->
+              <mat-expansion-panel
+                [expanded]="step === 0"
+                (opened)="setStep(0)"
+                hideToggle
+              >
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    <mat-icon *ngIf="generalInfoValid" style="font-size: 1.8vw;"
+                      >check</mat-icon
+                    >
+                    <mat-icon
+                      *ngIf="!generalInfoValid"
+                      style="font-size: 1.8vw;"
+                      >clear</mat-icon
+                    >
+                    <span fxFlex="10px"></span>
+                    <h2>General Info</h2>
+                  </mat-panel-title>
+                  <mat-panel-description
+                    fxLayout="row"
+                    fxLayoutAlign="flex-end center"
+                  >
+                    Dates, Title, Capacity, Etc... <span fxFlex="10px"></span>
+                    <mat-icon>info</mat-icon>
+                  </mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <div fxLayout="row wrap">
+                  <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                    <div class="pb-1">
+                      <mat-form-field class="full-width">
+                        <input
+                          matInput
+                          name="title"
+                          formControlName="title"
+                          placeholder="Meet Title"
+                          required
+                        />
+                      </mat-form-field>
+                      <small
+                        *ngIf="title.errors?.required && title.dirty"
+                        class="form-error-msg"
+                      >
+                        Title is required
+                      </small>
+                      <small
+                        *ngIf="title.errors?.minlength"
+                        class="form-error-msg"
+                      >
+                        Title must be at least
+                        {{ title.errors?.minlength.requiredLength }} characters
+                      </small>
+                      <small
+                        *ngIf="title.errors?.maxlength"
+                        class="form-error-msg"
+                      >
+                        Title cannot be longer than
+                        {{ title.errors?.maxlength.requiredLength }} characters
+                      </small>
+                    </div>
+                  </div>
+                  <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                    <div class="pb-1">
+                      <mat-form-field class="full-width">
+                        <input
+                          matInput
+                          name="subtitle"
+                          formControlName="subtitle"
+                          placeholder="Subtitle"
+                          required
+                        />
+                      </mat-form-field>
+                      <small
+                        *ngIf="subtitle.errors?.required && subtitle.dirty"
+                        class="form-error-msg"
+                      >
+                        Subtitle is required
+                      </small>
+                      <small
+                        *ngIf="subtitle.errors?.minlength"
+                        class="form-error-msg"
+                      >
+                        Subtitle must be at least
+                        {{ subtitle.errors?.minlength.requiredLength }}
+                        characters
+                      </small>
+                      <small
+                        *ngIf="subtitle.errors?.maxlength"
+                        class="form-error-msg"
+                      >
+                        Subtitle cannot be longer than
+                        {{ subtitle.errors?.maxlength.requiredLength }}
+                        characters
+                      </small>
+                    </div>
+                  </div>
+                  <div fxFlex="100" fxFlex.gt-xs="100" class="pr-1">
+                    <div class="pb-1">
+                      <mat-form-field class="full-width">
+                        <input
+                          matInput
+                          name="description"
+                          formControlName="description"
+                          placeholder="Description"
+                          required
+                        />
+                      </mat-form-field>
+                      <small
+                      *ngIf="description.errors?.required && description.dirty"
+                      class="form-error-msg"
+                    >
+                      Description is required
+                    </small>
+                    <small
+                    *ngIf="description.errors?.minlength"
+                    class="form-error-msg"
+                  >
+                  Description must be at least {{ description.errors?.minlength.requiredLength }} characters
+                  </small>
+                  <small
+                    *ngIf="description.errors?.maxlength"
+                    class="form-error-msg"
+                  >
+                  Description cannot be longer than {{ description.errors?.maxlength.requiredLength }} characters
+                  </small>
+                    </div>
+                  </div>
+                  <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                    <div class="pb-1">
+                      <mat-form-field class="full-width">
+                        <mat-label>Coordinator</mat-label>
+                        <mat-select
+                          matNativeControl
+                          name="coordinator"
+                          formControlName="coordinator"
+                          required
+                        >
+                          <mat-option
+                            *ngFor="let coordinator of cplCoordinators"
+                            [value]="coordinator._id"
+                            >{{ coordinator.name }}</mat-option
+                          >
+                        </mat-select>
+                      </mat-form-field>
+                      <small
+                      *ngIf="coordinator.errors?.required && coordinator.touched"
+                      class="form-error-msg"
+                    >
+                    Coordinator is required
+                    </small>
+                    </div>
+                  </div>
+                  <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                    <div class="pb-1">
+                      <mat-form-field class="full-width">
+                        <input
+                          matInput
+                          type="number"
+                          name="capacity"
+                          formControlName="capacity"
+                          placeholder="Capacity"
+                          required
+                          min="1"
+                        />
+                      </mat-form-field>
+                      <small
+                      *ngIf="capacity.errors?.required && capacity.dirty"
+                      class="form-error-msg"
+                    >
+                    Capacity is required
+                    </small>
+                    <small
+                    *ngIf="capacity.errors?.min"
+                    class="form-error-msg"
+                  >
+                  Capacity must be at least {{ capacity.errors?.min.min }}
+                  </small>
+                  <small
+                    *ngIf="capacity.errors?.max"
+                    class="form-error-msg"
+                  >
+                  Capacity cannot be more than {{ capacity.errors?.max.max }}
+                  </small>
+                    </div>
+                  </div>
+                </div>
+                <div fxLayout="row wrap">
+                  <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                    <div class="pb-1">
+                      <mat-form-field class="full-width">
+                        <input
+                          matInput
+                          type="datetime-local"
+                          formControlName="releaseDate"
+                          placeholder="Release date"
+                          required
+                        />
+                      </mat-form-field>
+                      <small
+                      *ngIf="releaseDate.errors?.required && releaseDate.touched"
+                      class="form-error-msg"
+                    >
+                    Release Date is required
+                    </small>
+                    <small
+                    *ngIf="releaseDate.errors?.pastDate && (releaseDate.value != '' && releaseDate.value != null)"
+                    class="form-error-msg"
+                  >
+                  Release Date must be in future
+                  </small>
+                    </div>
+                  </div>
+                  <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                    <div class="pb-1">
+                      <mat-form-field class="full-width">
+                        <input
+                          matInput
+                          type="datetime-local"
+                          formControlName="registrationClosingDate"
+                          placeholder="Registration Closing Date"
+                          required
+                        />
+                      </mat-form-field>
+                      <small
+                      *ngIf="registrationClosingDate.errors?.required && registrationClosingDate.touched"
+                      class="form-error-msg"
+                    >
+                    Registration Closing Date is required
+                    </small>
+                    <small
+                    *ngIf="registrationClosingDate.errors?.pastDate && (registrationClosingDate.value != '' && registrationClosingDate.value != null)"
+                    class="form-error-msg"
+                  >
+                  Registration Closing Date must be in future
+                  </small>
+                    </div>
+                  </div>
+                </div>
+                <div fxLayout="row wrap">
+                  <div fxLayout="row" fxLayoutAlign="start center">
+                    <h3 class="m-0">Dates</h3>
+                    <button
+                      mat-icon-button
+                      type="button"
+                      color="black"
+                      (click)="addDate()"
+                      height="auto"
+                      width="auto"
+                    >
+                      <mat-icon>add</mat-icon>
+                    </button>
+                  </div>
+                  <div fxFlex="100">
+                    <div formArrayName="dates">
+                      <div
+                        *ngFor="
+                          let date of meetForm.get('dates').controls;
+                          let i = index
+                        "
+                        [formGroupName]="i"
+                      >
+                        <div fxLayout="row wrap">
+                          <div fxFlex="100" fxFlex.gt-xs="48" class="pr-1">
+                            <div class="pb-1">
+                              <mat-form-field class="full-width">
+                                <input
+                                  matInput
+                                  type="datetime-local"
+                                  formControlName="start"
+                                  placeholder="Start Date"
+                                  required
+                                />
+                              </mat-form-field>
+                              <small
+                              *ngIf="meetDates.controls[i].controls.start.errors?.required && meetDates.controls[i].controls.start.touched"
+                              class="form-error-msg"
+                            >
+                            Start Date is required
+                            </small>
+                            <small
+                            *ngIf="meetDates.controls[i].controls.start.errors?.pastDate && (meetDates.controls[i].controls.start.value != '' && meetDates.controls[i].controls.start.value != null)"
+                            class="form-error-msg"
+                          >
+                          Start Date must be in future
+                          </small>
+                            </div>
+                          </div>
+
+                          <div fxFlex="100" fxFlex.gt-xs="48" class="">
+                            <div class="pb-1">
+                              <mat-form-field class="full-width">
+                                <input
+                                  matInput
+                                  type="datetime-local"
+                                  formControlName="end"
+                                  placeholder="End Date"
+                                  required
+                                />
+                              </mat-form-field>
+                              <small
+                              *ngIf="meetDates.controls[i].controls.end.errors?.required && meetDates.controls[i].controls.end.touched"
+                              class="form-error-msg"
+                            >
+                            End Date is required
+                            </small>
+                            <small
+                            *ngIf="meetDates.controls[i].controls.end.errors?.pastDate && (meetDates.controls[i].controls.end.value != '' && meetDates.controls[i].controls.end.value != null)"
+                            class="form-error-msg"
+                          >
+                          End Date must be in future
+                          </small>
+                            </div>
+                          </div>
+                          <div
+                            fxFlex
+                            fxLayout="row"
+                            fxLAyoutAlign="end center"
+                            class=""
+                            *ngIf="i != 0"
+                          >
+                            <div class="pb-1">
+                              <button
+                                mat-icon-button
+                                type="button"
+                                color="primary"
+                                (click)="removeDate()"
+                              >
+                                <mat-icon>clear</mat-icon>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div fxLayout="row wrap" style="margin-top: 20px;">
+                  <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                    <div class="pb-1">
+                      <h3>Meet Images</h3>
+                      <input
+                        type="file"
+                        ng2FileSelect
+                        [uploader]="uploader"
+                        multiple
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <mat-action-row>
+                  <button
+                    mat-button
+                    color="primary"
+                    (click)="nextStep()"
+                    type="button"
+                    [disabled]="!generalInfoCompletedOnce"
+                  >
+                    Next
+                  </button>
+                </mat-action-row>
+              </mat-expansion-panel>
+              <!-- Meet Info Panel -->
+              <mat-expansion-panel
+                [expanded]="step === 1"
+                (opened)="setStep(1)"
+                hideToggle
+                [ngClass]="{
+                  'not-complete': !generalInfoValid
+                }"
+                [disabled]="!generalInfoCompletedOnce"
+              >
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    <mat-icon *ngIf="meetInfoValid" style="font-size: 1.8vw;"
+                      >check</mat-icon
+                    >
+                    <mat-icon *ngIf="!meetInfoValid" style="font-size: 1.8vw;"
+                      >clear</mat-icon
+                    >
+                    <span fxFlex="10px"></span>
+                    <h2>Meet Info</h2>
+                  </mat-panel-title>
+                  <mat-panel-description
+                    fxLayout="row"
+                    fxLayoutAlign="flex-end center"
+                  >
+                    Events, Categories, Testing, Etc...
+                    <span fxFlex="10px"></span>
+                    <mat-icon>fitness_center</mat-icon>
+                  </mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <div
+                  fxLayout="row wrap"
+                  class="full-width"
+                  formGroupName="eventInfo"
+                >
+                  <div fxFlex="50" fxLayout="row wrap">
+                    <div fxFlex="100">
+                      <h3>Categories</h3>
+                    </div>
+                    <div fxLayour="row" fxFlex="100" formArrayName="categories">
+                      <div
+                        fxFlex="100"
+                        *ngFor="
+                          let category of league.categories;
+                          let i = index
+                        "
+                      >
+                        <mat-checkbox [formControlName]="i">
+                          {{ category }}
+                        </mat-checkbox>
+                      </div>
+                    </div>
+                    <small
+                    *ngIf="categories.errors?.atLeastOneSelected"
+                    class="form-error-msg"
+                  >
+                  At least one category must be selected
+                  </small>
+                  </div>
+                  <div fxFlex="50" fxLayout="row wrap">
+                    <div fxFlex="100">
+                      <h3>Tests</h3>
+                    </div>
+                    <div fxLayout="column" fxFlex="100" formArrayName="testing">
+                      <div
+                        class="full-width"
+                        fxLayout="column"
+                        fxLayoutAlign="start start"
+                        *ngFor="let test of league.tests; let i = index"
+                      >
+                        <div fxLayout="row" fxLayoutAlign="space-between center" class="full-width" [formGroupName]="i">
+                          <mat-checkbox fxFlex="50" [value]="" formControlName="type">
+                            {{ test.type }}
+                          </mat-checkbox>
+                          <input
+                            fxFlex
+                            matInput
+                            type="number"
+                            name="price"
+                            [value]="test.price"
+                            formControlName="price"
+                            placeholder="price"
+                          />
+                        </div>
+                        <div class="full-width" >
+                          <small
+                          *ngIf="testing.controls[i].errors?.priceLessThanZero"
+                          class="form-error-msg"
+                        >
+                        Price must be greater than 100
+                        </small>
+                        </div>
+                      </div>
+                      <div class="full-width">
+                        <small
+                        *ngIf="testing.errors?.atLeastOneSelected"
+                        class="form-error-msg"
+                      >
+                      At least one Test must be selected
+                      </small>
+                      </div> 
+                    </div>
+                  </div>
+                  <div fxFlex="50" fxLayout="row wrap">
+                    <div fxFlex="100">
+                      <h3>Events</h3>
+                    </div>
+                    <div fxLayout="column" fxFlex="100" formArrayName="events">
+                      <div
+                        class="full-width"
+                        fxLayout="column"
+                        fxLayoutAlign="start start"
+                        *ngFor="let event of league.events; let i = index"
+                      >
+                        <div fxLayout="row" fxLayoutAlign="space-between center" class="full-width" [formGroupName]="i">
+                          <mat-checkbox fxFlex="50" formControlName="type">
+                            {{ event.type }}
+                          </mat-checkbox>
+                          <input
+                            fxFlex
+                            matInput
+                            type="number"
+                            name="price"
+                            formControlName="price"
+                            placeholder="price"
+                          />
+                        </div>
+                        <div class="full-width" >
+                          <small
+                          *ngIf="events.controls[i].errors?.priceLessThanZero"
+                          class="form-error-msg"
+                        >
+                        Price must be greater than 100
+                        </small>
+                        </div>
+                      </div>
+                      <div class="full-width">
+                        <small
+                        *ngIf="events.errors?.atLeastOneSelected"
+                        class="form-error-msg"
+                      >
+                      At least one lift must be selected
+                      </small>
+                      </div> 
+                    </div>
+                  </div>
+                </div>
+
+                <mat-action-row>
+                  <button
+                    mat-button
+                    color="warn"
+                    (click)="prevStep()"
+                    type="button"
+                  >
+                    Previous
+                  </button>
+                  <button
+                    mat-button
+                    color="primary"
+                    (click)="nextStep()"
+                    type="button"
+                    [disabled]="!meetInfoCompletedOnce"
+                  >
+                    Next
+                  </button>
+                </mat-action-row>
+              </mat-expansion-panel>
+              <!-- Venue Info Panel -->
+              <mat-expansion-panel
+                [expanded]="step === 2"
+                (opened)="setStep(2)"
+                hideToggle
+                [ngClass]="{
+                  'not-complete': !meetInfoValid
+                }"
+                [disabled]="!meetInfoCompletedOnce"
+              >
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    <mat-icon *ngIf="venueInfoValid" style="font-size: 1.8vw;"
+                      >check</mat-icon
+                    >
+                    <mat-icon *ngIf="!venueInfoValid" style="font-size: 1.8vw;"
+                      >clear</mat-icon
+                    >
+                    <span fxFlex="10px"></span>
+                    <h2>Venue Info</h2>
+                  </mat-panel-title>
+                  <mat-panel-description
+                    fxLayout="row"
+                    fxLayoutAlign="flex-end center"
+                  >
+                    Address, City, Directions, Etc...
+                    <span fxFlex="10px"></span>
+                    <mat-icon>map</mat-icon>
+                  </mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <div formGroupName="venue">
+                  <div formGroupName="location">
+                    <div fxLayout="row wrap">
+                      <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                        <div class="pb-1">
+                          <mat-form-field class="full-width">
+                            <input
+                              matInput
+                              name="name"
+                              formControlName="name"
+                              placeholder="Venue Name"
+                            />
+                          </mat-form-field>
+                          <small
+                          *ngIf="venueName.errors?.required && venueName.touched"
+                          class="form-error-msg"
+                        >
+                          Name is required
+                        </small>
+                        <small
+                          *ngIf="venueName.errors?.minlength"
+                          class="form-error-msg"
+                        >
+                          Name must be at least
+                          {{ venueName.errors?.minlength.requiredLength }} characters
+                        </small>
+                        <small
+                          *ngIf="venueName.errors?.maxlength"
+                          class="form-error-msg"
+                        >
+                          Name cannot be longer than
+                          {{ venueName.errors?.maxlength.requiredLength }} characters
+                        </small>
+                        </div>
+                      </div>
+                    </div>
+                    <div formGroupName="address">
+                      <div fxLayout="row wrap">
+                        <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                          <div class="pb-1">
+                            <mat-form-field class="full-width">
+                              <input
+                                matInput
+                                name="street"
+                                formControlName="street"
+                                placeholder="Street Address"
+                              />
+                            </mat-form-field>
+                            <small
+                            *ngIf="venueStreet.errors?.required && venueStreet.touched"
+                            class="form-error-msg"
+                          >
+                            Street is required
+                          </small>
+                          <small
+                            *ngIf="venueStreet.errors?.minlength"
+                            class="form-error-msg"
+                          >
+                            Street must be at least
+                            {{ venueStreet.errors?.minlength.requiredLength }} characters
+                          </small>
+                          <small
+                            *ngIf="venueStreet.errors?.maxlength"
+                            class="form-error-msg"
+                          >
+                            Street cannot be longer than
+                            {{ venueStreet.errors?.maxlength.requiredLength }} characters
+                          </small>
+                          </div>
+                        </div>
+                        <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                          <div class="pb-1">
+                            <mat-form-field class="full-width">
+                              <input
+                                matInput
+                                name="city"
+                                formControlName="city"
+                                placeholder="City"
+                              />
+                            </mat-form-field>
+                            <small
+                            *ngIf="venueCity.errors?.required && venueCity.touched"
+                            class="form-error-msg"
+                          >
+                            City is required
+                          </small>
+                          <small
+                          *ngIf="venueCity.errors?.minlength"
+                          class="form-error-msg"
+                        >
+                          City must be at least
+                          {{ venueCity.errors?.minlength.requiredLength }} characters
+                        </small>
+                        <small
+                          *ngIf="venueCity.errors?.maxlength"
+                          class="form-error-msg"
+                        >
+                          City cannot be longer than
+                          {{ venueCity.errors?.maxlength.requiredLength }} characters
+                        </small>
+                          </div>
+                        </div>
+                        <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                          <div class="pb-1">
+                            <mat-form-field class="full-width">
+                              <mat-label>Province</mat-label>
+                              <mat-select
+                                matNativeControl
+                                name="province"
+                                formControlName="province"
+                              >
+                                <mat-option
+                                  *ngFor="
+                                    let province of platformService.provinces
+                                  "
+                                  [value]="province"
+                                  >{{ province }}</mat-option
+                                >
+                              </mat-select>
+                            </mat-form-field>
+                            <small
+                            *ngIf="venueProvince.errors?.required && venueProvince.touched"
+                            class="form-error-msg"
+                          >
+                            Province is required
+                          </small>
+                          </div>
+                        </div>
+                        <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                          <div class="pb-1">
+                            <mat-form-field class="full-width">
+                              <mat-label>Country</mat-label>
+                              <mat-select
+                                matNativeControl
+                                name="country"
+                                formControlName="country"
+                              >
+                                <mat-option value="Canada">Canada</mat-option>
+                              </mat-select>
+                            </mat-form-field>
+                            <small
+                            *ngIf="venueCountry.errors?.required && venueCountry.touched"
+                            class="form-error-msg"
+                          >
+                            Country is required
+                          </small>
+                          </div>
+                        </div>
+                        <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                          <div class="pb-1">
+                            <mat-form-field class="full-width">
+                              <input
+                                matInput
+                                name="postal"
+                                formControlName="postal"
+                                placeholder="Postal Code"
+                              />
+                            </mat-form-field>
+                            <small
+                            *ngIf="venuePostal.errors?.required && venuePostal.touched"
+                            class="form-error-msg"
+                          >
+                            Postal is required
+                          </small>
+                          <small
+                          *ngIf="venuePostal.errors?.postalCodeInvalid && venuePostal.touched && venuePostal.value.length > 0"
+                          class="form-error-msg"
+                        >
+                          Postal Code must be of form X1X 1X1
+                        </small>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div fxLayout="row wrap">
+                    <div fxFlex="100" fxFlex.gt-xs="100" class="pr-1">
+                      <div class="pb-1">
+                        <mat-form-field class="full-width">
+                          <input
+                            matInput
+                            name="info"
+                            formControlName="info"
+                            placeholder="Meet Venue Info"
+                          />
+                        </mat-form-field>
+                        <small
+                        *ngIf="venueInfo.errors?.required && venueInfo.touched"
+                        class="form-error-msg"
+                      >
+                        Info is required
+                      </small>
+                      <small
+                      *ngIf="venueInfo.errors?.minlength"
+                      class="form-error-msg"
+                    >
+                      Info must be at least
+                      {{ venueInfo.errors?.minlength.requiredLength }} characters
+                    </small>
+                    <small
+                      *ngIf="venueInfo.errors?.maxlength"
+                      class="form-error-msg"
+                    >
+                      Info cannot be longer than
+                      {{ venueInfo.errors?.maxlength.requiredLength }} characters
+                    </small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <mat-action-row>
+                  <button
+                    mat-button
+                    color="warn"
+                    (click)="prevStep()"
+                    type="button"
+                  >
+                    Previous
+                  </button>
+                  <button
+                    mat-button
+                    color="primary"
+                    (click)="nextStep()"
+                    type="button"
+                    [disabled]="!venueInfoCompletedOnce"
+                  >
+                    Next
+                  </button>
+                </mat-action-row>
+              </mat-expansion-panel>
+              <!-- Weigh In Info Panel -->
+              <mat-expansion-panel
+                [expanded]="step === 3"
+                (opened)="setStep(3)"
+                hideToggle
+                [ngClass]="{
+                  'not-complete': !venueInfoValid
+                }"
+                [disabled]="!venueInfoCompletedOnce"
+              >
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    <mat-icon *ngIf="weighInInfoValid" style="font-size: 1.8vw;"
+                      >check</mat-icon
+                    >
+                    <mat-icon
+                      *ngIf="!weighInInfoValid"
+                      style="font-size: 1.8vw;"
+                      >clear</mat-icon
+                    >
+                    <span fxFlex="10px"></span>
+                    <h2>Weigh In Info</h2>
+                  </mat-panel-title>
+                  <mat-panel-description
+                    fxLayout="row"
+                    fxLayoutAlign="flex-end center"
+                  >
+                    Location, Time, Date, Etc... <span fxFlex="10px"></span>
+                    <mat-icon>accessibility</mat-icon>
+                  </mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <div formGroupName="weighInInfo">
+                  <!-- <div fxLayout="row wrap">
+                    <div class="pb-1">
+                      <Label>Weigh in location same as meet location?</Label>
+                      <mat-radio-group
+                        name="weighInLocationSameAsMeet"
+                        formControlName="weighInLocationSameAsMeet"
+                      >
+                        <mat-radio-button value="true">Yes</mat-radio-button>
+                        <mat-radio-button value="false">No</mat-radio-button>
+                      </mat-radio-group>
+                    </div>
+                  </div> -->
+                  <div fxLayout="row wrap" formGroupName="times">
+                    <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                      <div class="pb-1">
+                        <mat-form-field class="full-width">
+                          <input
+                            matInput
+                            type="datetime-local"
+                            formControlName="start"
+                            placeholder="Start Time"
+                          />
+                        </mat-form-field>
+                        <small
+                        *ngIf="weighInTimes.controls.start.errors?.required && weighInTimes.controls.start.touched"
+                        class="form-error-msg"
+                      >
+                      Start Date is required
+                      </small>
+                      <small
+                      *ngIf="weighInTimes.controls.start.errors?.pastDate && (weighInTimes.controls.start.value != '' && weighInTimes.controls.start.value != null)"
+                      class="form-error-msg"
+                    >
+                    Start Date must be in future
+                    </small>
+                      </div>
+                    </div>
+                    <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                      <div class="pb-1">
+                        <mat-form-field class="full-width">
+                          <input
+                            matInput
+                            type="datetime-local"
+                            formControlName="end"
+                            placeholder="End Time"
+                          />
+                        </mat-form-field>
+                        <small
+                        *ngIf="weighInTimes.controls.end.errors?.required && weighInTimes.controls.end.touched"
+                        class="form-error-msg"
+                      >
+                      End Date is required
+                      </small>
+                      <small
+                      *ngIf="weighInTimes.controls.end.errors?.pastDate && (weighInTimes.controls.end.value != '' && weighInTimes.controls.end.value != null)"
+                      class="form-error-msg"
+                    >
+                    End Date must be in future
+                    </small>
+                      </div>
+                    </div>
+                  </div>
+                  <div formGroupName="location">
+                    <div fxLayout="row wrap">
+                      <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                        <div class="pb-1">
+                          <mat-form-field class="full-width">
+                            <input
+                              matInput
+                              name="name"
+                              formControlName="name"
+                              placeholder="Weigh In Venue Name"
+                            />
+                          </mat-form-field>
+                          <small
+                          *ngIf="weighInName.errors?.required && weighInName.touched"
+                          class="form-error-msg"
+                        >
+                          Name is required
+                        </small>
+                        <small
+                          *ngIf="weighInName.errors?.minlength"
+                          class="form-error-msg"
+                        >
+                          Name must be at least
+                          {{ weighInName.errors?.minlength.requiredLength }} characters
+                        </small>
+                        <small
+                          *ngIf="weighInName.errors?.maxlength"
+                          class="form-error-msg"
+                        >
+                          Name cannot be longer than
+                          {{ weighInName.errors?.maxlength.requiredLength }} characters
+                        </small>
+                        </div>
+                      </div>
+                    </div>
+                    <div formGroupName="address">
+                      <div fxLayout="row wrap">
+                        <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                          <div class="pb-1">
+                            <mat-form-field class="full-width">
+                              <input
+                                matInput
+                                name="street"
+                                formControlName="street"
+                                placeholder="Street Address"
+                              />
+                            </mat-form-field>
+                            <small
+                            *ngIf="weighInStreet.errors?.required && weighInStreet.touched"
+                            class="form-error-msg"
+                          >
+                            Address is required
+                          </small>
+                          <small
+                            *ngIf="weighInStreet.errors?.minlength"
+                            class="form-error-msg"
+                          >
+                          Address must be at least
+                            {{ weighInStreet.errors?.minlength.requiredLength }} characters
+                          </small>
+                          <small
+                            *ngIf="weighInStreet.errors?.maxlength"
+                            class="form-error-msg"
+                          >
+                          Address cannot be longer than
+                            {{ weighInStreet.errors?.maxlength.requiredLength }} characters
+                          </small>
+                          </div>
+                        </div>
+                        <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                          <div class="pb-1">
+                            <mat-form-field class="full-width">
+                              <input
+                                matInput
+                                name="city"
+                                formControlName="city"
+                                placeholder="City"
+                              />
+                            </mat-form-field>
+                            <small
+                            *ngIf="weighInCity.errors?.required && weighInCity.touched"
+                            class="form-error-msg"
+                          >
+                            City is required
+                          </small>
+                          <small
+                            *ngIf="weighInCity.errors?.minlength"
+                            class="form-error-msg"
+                          >
+                          City must be at least
+                            {{ weighInCity.errors?.minlength.requiredLength }} characters
+                          </small>
+                          <small
+                            *ngIf="weighInCity.errors?.maxlength"
+                            class="form-error-msg"
+                          >
+                          City cannot be longer than
+                            {{ weighInCity.errors?.maxlength.requiredLength }} characters
+                          </small>
+                          </div>
+                        </div>
+                        <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                          <div class="pb-1">
+                            <mat-form-field class="full-width">
+                              <mat-label>Province</mat-label>
+                              <mat-select
+                                matNativeControl
+                                name="province"
+                                formControlName="province"
+                              >
+                                <mat-option
+                                  *ngFor="
+                                    let province of platformService.provinces
+                                  "
+                                  [value]="province"
+                                  >{{ province }}</mat-option
+                                >
+                              </mat-select>
+                            </mat-form-field>
+                            <small
+                            *ngIf="weighInProvince.errors?.required && weighInProvince.touched"
+                            class="form-error-msg"
+                          >
+                            Province is required
+                          </small>
+                          </div>
+                        </div>
+                        <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                          <div class="pb-1">
+                            <mat-form-field class="full-width">
+                              <mat-label>Country</mat-label>
+                              <mat-select
+                                matNativeControl
+                                name="country"
+                                formControlName="country"
+                              >
+                                <mat-option value="Canada">Canada</mat-option>
+                              </mat-select>
+                            </mat-form-field>
+                            <small
+                            *ngIf="weighInCountry.errors?.required && weighInCountry.touched"
+                            class="form-error-msg"
+                          >
+                            Country is required
+                          </small>
+                          </div>
+                        </div>
+                        <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                          <div class="pb-1">
+                            <mat-form-field class="full-width">
+                              <input
+                                matInput
+                                name="postal"
+                                formControlName="postal"
+                                placeholder="Postal Code"
+                              />
+                            </mat-form-field>
+                            <small
+                            *ngIf="weighInPostal.errors?.postalCodeInvalid && weighInPostal.touched && weighInPostal.value.length > 0"
+                            class="form-error-msg"
+                          >
+                            Postal Code must be of form X1X 1X1
+                          </small>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div fxLayout="row wrap">
+                    <div fxFlex="100" fxFlex.gt-xs="100" class="pr-1">
+                      <div class="pb-1">
+                        <mat-form-field class="full-width">
+                          <input
+                            matInput
+                            name="info"
+                            formControlName="info"
+                            placeholder="Weigh In Info"
+                          />
+                        </mat-form-field>
+                        <small
+                        *ngIf="weighInInfo.errors?.required && weighInInfo.touched"
+                        class="form-error-msg"
+                      >
+                        Info is required
+                      </small>
+                      <small
+                      *ngIf="weighInInfo.errors?.minlength"
+                      class="form-error-msg"
+                    >
+                      Info must be at least
+                      {{ weighInInfo.errors?.minlength.requiredLength }} characters
+                    </small>
+                    <small
+                      *ngIf="weighInInfo.errors?.maxlength"
+                      class="form-error-msg"
+                    >
+                      Info cannot be longer than
+                      {{ weighInInfo.errors?.maxlength.requiredLength }} characters
+                    </small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <mat-action-row>
+                  <button
+                    mat-button
+                    color="warn"
+                    (click)="prevStep()"
+                    type="button"
+                  >
+                    Previous
+                  </button>
+                  <button
+                    mat-button
+                    color="primary"
+                    (click)="nextStep()"
+                    type="button"
+                    [disabled]="!weighInInfoCompletedOnce"
+                  >
+                    Next
+                  </button>
+                </mat-action-row>
+              </mat-expansion-panel>
+              <!-- Accomodation Info Panel -->
+              <mat-expansion-panel
+                [expanded]="step === 4"
+                (opened)="setStep(4)"
+                hideToggle
+                [ngClass]="{
+                  'not-complete': !weighInInfoValid
+                }"
+                [disabled]="!weighInInfoCompletedOnce"
+              >
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    <mat-icon
+                      *ngIf="accommodationInfoValid"
+                      style="font-size: 1.8vw;"
+                      >check</mat-icon
+                    >
+                    <mat-icon
+                      *ngIf="!accommodationInfoValid"
+                      style="font-size: 1.8vw;"
+                      >clear</mat-icon
+                    >
+                    <span fxFlex="10px"></span>
+                    <h2>Accommodation Info</h2>
+                  </mat-panel-title>
+                  <mat-panel-description
+                    fxLayout="row"
+                    fxLayoutAlign="flex-end center"
+                  >
+                    Hotel, Directions, Deals, Etc... <span fxFlex="10px"></span>
+                    <mat-icon>hotel</mat-icon>
+                  </mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <div formGroupName="accommodation">
+                  <div fxLayout="row wrap">
+                    <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                      <div class="pb-1">
+                        <p>Accomodation File</p>
+                        <input
+                          type="file"
+                          ng2FileSelect
+                          [uploader]="uploader"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div formGroupName="location">
+                    <div fxLayout="row wrap">
+                      <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                        <div class="pb-1">
+                          <mat-form-field class="full-width">
+                            <input
+                              matInput
+                              name="name"
+                              formControlName="name"
+                              placeholder="Accommodation Name"
+                            />
+                          </mat-form-field>
+                          <small
+                          *ngIf="accommodationName.errors?.required && accommodationName.touched"
+                          class="form-error-msg"
+                        >
+                          Name is required
+                        </small>
+                        <small
+                          *ngIf="accommodationName.errors?.minlength"
+                          class="form-error-msg"
+                        >
+                          Name must be at least
+                          {{ accommodationName.errors?.minlength.requiredLength }} characters
+                        </small>
+                        <small
+                          *ngIf="accommodationName.errors?.maxlength"
+                          class="form-error-msg"
+                        >
+                          Name cannot be longer than
+                          {{ accommodationName.errors?.maxlength.requiredLength }} characters
+                        </small>
+                        </div>
+                      </div>
+                    </div>
+                    <div formGroupName="address">
+                      <div fxLayout="row wrap">
+                        <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                          <div class="pb-1">
+                            <mat-form-field class="full-width">
+                              <input
+                                matInput
+                                name="street"
+                                formControlName="street"
+                                placeholder="Street Address"
+                              />
+                            </mat-form-field>
+                            <small
+                            *ngIf="accommodationStreet.errors?.required && accommodationStreet.touched"
+                            class="form-error-msg"
+                          >
+                            Street is required
+                          </small>
+                          <small
+                            *ngIf="accommodationStreet.errors?.minlength"
+                            class="form-error-msg"
+                          >
+                            Street must be at least
+                            {{ accommodationStreet.errors?.minlength.requiredLength }} characters
+                          </small>
+                          <small
+                            *ngIf="accommodationStreet.errors?.maxlength"
+                            class="form-error-msg"
+                          >
+                            Street cannot be longer than
+                            {{ accommodationStreet.errors?.maxlength.requiredLength }} characters
+                          </small>
+                          </div>
+                        </div>
+                        <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                          <div class="pb-1">
+                            <mat-form-field class="full-width">
+                              <input
+                                matInput
+                                name="city"
+                                formControlName="city"
+                                placeholder="City"
+                              />
+                            </mat-form-field>
+                            <small
+                            *ngIf="accommodationCity.errors?.required && accommodationCity.touched"
+                            class="form-error-msg"
+                          >
+                            City is required
+                          </small>
+                          <small
+                            *ngIf="accommodationCity.errors?.minlength"
+                            class="form-error-msg"
+                          >
+                          City must be at least
+                            {{ accommodationCity.errors?.minlength.requiredLength }} characters
+                          </small>
+                          <small
+                            *ngIf="accommodationCity.errors?.maxlength"
+                            class="form-error-msg"
+                          >
+                          City cannot be longer than
+                            {{ accommodationCity.errors?.maxlength.requiredLength }} characters
+                          </small>
+                          </div>
+                        </div>
+                        <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                          <div class="pb-1">
+                            <mat-form-field class="full-width">
+                              <mat-label>Province</mat-label>
+                              <mat-select
+                                matNativeControl
+                                name="province"
+                                formControlName="province"
+                              >
+                                <mat-option
+                                  *ngFor="
+                                    let province of platformService.provinces
+                                  "
+                                  [value]="province"
+                                  >{{ province }}</mat-option
+                                >
+                              </mat-select>
+                            </mat-form-field>
+                            <small
+                            *ngIf="accommodationProvince.errors?.required && accommodationProvince.touched"
+                            class="form-error-msg"
+                          >
+                            Province is required
+                          </small>
+                          </div>
+                        </div>
+                        <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                          <div class="pb-1">
+                            <mat-form-field class="full-width">
+                              <mat-label>Country</mat-label>
+                              <mat-select
+                                matNativeControl
+                                name="country"
+                                formControlName="country"
+                              >
+                                <mat-option value="Canada">Canada</mat-option>
+                              </mat-select>
+                            </mat-form-field>
+                            <small
+                            *ngIf="accommodationCountry.errors?.required && accommodationCountry.touched"
+                            class="form-error-msg"
+                          >
+                            Province is required
+                          </small>
+                          </div>
+                        </div>
+                        <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                          <div class="pb-1">
+                            <mat-form-field class="full-width">
+                              <input
+                                matInput
+                                name="postal"
+                                formControlName="postal"
+                                placeholder="Postal Code"
+                              />
+                            </mat-form-field>
+                            <small
+                            *ngIf="accommodationPostal.errors?.postalCodeInvalid && accommodationPostal.touched && accommodationPostal.value.length > 0"
+                            class="form-error-msg"
+                          >
+                            Postal Code must be of form X1X 1X1
+                          </small>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div fxLayout="row wrap">
+                    <div fxFlex="100" fxFlex.gt-xs="100" class="pr-1">
+                      <div class="pb-1">
+                        <mat-form-field class="full-width">
+                          <input
+                            matInput
+                            name="info"
+                            formControlName="info"
+                            placeholder="Accommodation Info"
+                          />
+                        </mat-form-field>
+                        <small
+                        *ngIf="accommodationInfo.errors?.required && accommodationInfo.touched"
+                        class="form-error-msg"
+                      >
+                        Info is required
+                      </small>
+                      <small
+                      *ngIf="accommodationInfo.errors?.minlength"
+                      class="form-error-msg"
+                    >
+                      Info must be at least
+                      {{ accommodationInfo.errors?.minlength.requiredLength }} characters
+                    </small>
+                    <small
+                      *ngIf="accommodationInfo.errors?.maxlength"
+                      class="form-error-msg"
+                    >
+                      Info cannot be longer than
+                      {{ accommodationInfo.errors?.maxlength.requiredLength }} characters
+                    </small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <mat-action-row>
+                  <button
+                    mat-button
+                    color="warn"
+                    (click)="prevStep()"
+                    type="button"
+                  >
+                    Previous
+                  </button>
+                  <button
+                    mat-button
+                    color="primary"
+                    (click)="nextStep()"
+                    type="button"
+                    [disabled]="!accommodationInfoCompletedOnce"
+                  >
+                    Next
+                  </button>
+                </mat-action-row>
+              </mat-expansion-panel>
+              <!-- Fees Info Panel -->
+              <mat-expansion-panel
+                [expanded]="step === 5"
+                (opened)="setStep(5)"
+                hideToggle
+                [ngClass]="{
+                  'not-complete': !accommodationInfoValid
+                }"
+                [disabled]="!accommodationInfoCompletedOnce"
+              >
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    <mat-icon *ngIf="feesInfoValid && feesInfoCompletedOnce" style="font-size: 1.8vw;"
+                      >check</mat-icon
+                    >
+                    <mat-icon *ngIf="!feesInfoValid && !feesInfoCompletedOnce" style="font-size: 1.8vw;"
+                      >clear</mat-icon
+                    >
+                    <span fxFlex="10px"></span>
+                    <h2>Fees Info</h2>
+                  </mat-panel-title>
+                  <mat-panel-description
+                    fxLayout="row"
+                    fxLayoutAlign="flex-end center"
+                  >
+                    Fees, Etc... <span fxFlex="10px"></span>
+                    <mat-icon>attach_money</mat-icon>
+                  </mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <!-- <div formGroupName="fees">
+                  <div fxLayout="row wrap">
+                    <div
+                      *ngIf="checkedLifts.includes('full-power')"
+                      fxFlex="100"
+                      fxFlex.gt-xs="50"
+                      class="pr-1"
+                    >
+                      <div class="pb-1">
+                        <mat-form-field class="full-width">
+                          <input
+                            matInput
+                            type="number"
+                            name="fullPowerFee"
+                            min="0.01"
+                            step="0.01"
+                            formControlName="fullPowerFee"
+                            placeholder="Full Power Fee"
+                          />
+                        </mat-form-field>
+                      </div>
+                    </div>
+                    <div
+                      *ngIf="checkedLifts.includes('bench-only')"
+                      fxFlex="100"
+                      fxFlex.gt-xs="50"
+                      class="pr-1"
+                    >
+                      <div class="pb-1">
+                        <mat-form-field class="full-width">
+                          <input
+                            matInput
+                            type="number"
+                            name="benchOnlyFee"
+                            min="0.01"
+                            step="0.01"
+                            formControlName="benchOnlyFee"
+                            placeholder="Bench Only Fee"
+                          />
+                        </mat-form-field>
+                      </div>
+                    </div>
+                    <div
+                      *ngIf="checkedLifts.includes('deadlift-only')"
+                      fxFlex="100"
+                      fxFlex.gt-xs="50"
+                      class="pr-1"
+                    >
+                      <div class="pb-1">
+                        <mat-form-field class="full-width">
+                          <input
+                            matInput
+                            type="number"
+                            name="deadliftOnlyFee"
+                            min="0.01"
+                            step="0.01"
+                            formControlName="deadliftOnlyFee"
+                            placeholder="Deadlift Only Fee"
+                          />
+                        </mat-form-field>
+                      </div>
+                    </div>
+                    <div
+                      *ngIf="checkedTests.includes('tested')"
+                      fxFlex="100"
+                      fxFlex.gt-xs="50"
+                      class="pr-1"
+                    >
+                      <div class="pb-1">
+                        <mat-form-field class="full-width">
+                          <input
+                            matInput
+                            type="number"
+                            name="testedFee"
+                            min="0.01"
+                            step="0.01"
+                            formControlName="testedFee"
+                            placeholder="Tested Fee"
+                          />
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+                </div> -->
+                <div formArrayName="merchandise">
+                  <div fxLayout="row" fxLayoutAlign="start center">
+                    <h3 class="m-0">Merchandise</h3>
+                    <button
+                      mat-icon-button
+                      type="button"
+                      color="black"
+                      (click)="addMerchandise()"
+                      height="auto"
+                      width="auto"
+                    >
+                      <mat-icon>add</mat-icon>
+                    </button>
+                  </div>
+                  <div
+                    *ngFor="
+                      let date of meetForm.get('merchandise').controls;
+                      let i = index
+                    "
+                    [formGroupName]="i"
+                  >
+                    <div fxLayout="row wrap">
+                      <div fxFlex="100" fxFlex.gt-xs="48" class="pr-1">
+                        <div class="pb-1">
+                          <mat-form-field class="full-width">
+                            <input
+                              matInput
+                              type="string"
+                              formControlName="item"
+                              placeholder="Item"
+                            />
+                          </mat-form-field>
+                          <small
+                          *ngIf="merchandise.controls[i].controls.item.errors?.required && merchandise.controls[i].controls.item.touched"
+                          class="form-error-msg"
+                        >
+                          Item Name Required
+                        </small>
+                        </div>
+                      </div>
+
+                      <div fxFlex="100" fxFlex.gt-xs="48" class="">
+                        <div class="pb-1">
+                          <mat-form-field class="full-width">
+                            <input
+                              matInput
+                              type="string"
+                              formControlName="description"
+                              placeholder="Description"
+                            />
+                          </mat-form-field>
+                          <small
+                          *ngIf="merchandise.controls[i].controls.description.errors?.required && merchandise.controls[i].controls.description.touched"
+                          class="form-error-msg"
+                        >
+                          Item Description Required
+                        </small>
+                        </div>
+                      </div>
+                      <div fxFlex="100" fxFlex.gt-xs="48" class="">
+                        <div class="pb-1">
+                          <mat-form-field class="full-width">
+                            <input
+                              matInput
+                              type="number"
+                              formControlName="price"
+                              placeholder="Price"
+                              min="0"
+                            />
+                          </mat-form-field>
+                          <small
+                          *ngIf="merchandise.controls[i].controls.price.errors?.required && merchandise.controls[i].controls.price.touched"
+                          class="form-error-msg"
+                        >
+                          Item Price Required
+                        </small>
+                        </div>
+                      </div>
+                      <div
+                        fxFlex
+                        fxLayout="row"
+                        fxLAyoutAlign="end center"
+                        class=""
+                      >
+                        <div class="pb-1">
+                          <button
+                            mat-icon-button
+                            type="button"
+                            color="primary"
+                            (click)="removeMerchandise(i)"
+                          >
+                            <mat-icon>clear</mat-icon>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <mat-action-row>
+                  <button
+                    mat-button
+                    color="warn"
+                    (click)="prevStep()"
+                    type="button"
+                  >
+                    Previous
+                  </button>
+                  <button
+                    mat-button
+                    color="primary"
+                    (click)="nextStep()"
+                    type="button"
+                    [disabled]="!feesInfoCompletedOnce"
+                  >
+                    Next
+                  </button>
+                </mat-action-row>
+              </mat-expansion-panel>
+            </mat-accordion>
+          </form>
+        </mat-card-content>
+        <mat-card-actions style="padding: 20px 24px !important;">
+          <div fxLayout="row wrap">
+            <div fxFlex="100" fxFlex.gt-xs="100" class="pr-1">
+              <button
+                mat-button
+                color="primary"
+                type="button"
+                [routerLink]="['../']"
+              >
+                Cancel
+              </button>
+              <button
+                mat-button
+                color="primary"
+                type="button"
+                (click)="submitForm()"
+                [disabled]="meetForm.invalid"
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+</div>

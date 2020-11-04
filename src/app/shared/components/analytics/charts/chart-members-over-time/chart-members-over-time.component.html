@@ -1,0 +1,70 @@
+<mat-progress-spinner
+  *ngIf="!chartReady"
+  class="example-margin"
+  [color]="warn"
+  [mode]="'indeterminate'"
+  [value]="75"
+>
+</mat-progress-spinner>
+<div *ngIf="chartReady" fxLayout="row wrap" fxFlex="100">
+  <h2>Members Over Time</h2>
+  <div fxFlex="100" fxLayout="row">
+    <form
+      fxFlex
+      fxLayout="row wrap"
+      class="sort-form"
+      [formGroup]="filterForm"
+    >
+      <div fxLayout="row wrap" fxFlex="100" fxFlex.gt-sm="33.3">
+        <div fxFlex="100" fxFlex.gt-sm="50">
+          <mat-form-field
+            fxFlex
+            style="margin: 8px 8px 8px 0px; padding: 8px; background-color: white"
+          >
+            <mat-label>Year</mat-label>
+            <mat-select formControlName="year">
+              <mat-option [value]="'All'"> All </mat-option>
+              <mat-option *ngFor="let year of years" [value]="year">
+                {{ year }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+      <!-- <div fxLayout="row wrap" fxFlex="100" fxFlex.gt-sm="33.3">
+        <div fxFlex="100" fxFlex.gt-sm="50">
+          <mat-form-field
+            fxFlex
+            style="margin: 8px; padding: 8px; background-color: white"
+          >
+            <mat-label>Month</mat-label>
+            <mat-select formControlName="year">
+              <mat-option [value]="'All'"> All </mat-option>
+              <mat-option *ngFor="let month of months" [value]="month">
+                {{ month }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div> -->
+    </form>
+  </div>
+  <div
+    fxFlex="100"
+    class="chart"
+    style="display: block; width: 100%; margin: 0px"
+  >
+    <canvas
+      baseChart
+      class="chart-canvas"
+      [datasets]="lineChartData"
+      [labels]="lineChartLabels"
+      [options]="lineChartOptions"
+      [colors]="lineChartColors"
+      [legend]="lineChartLegend"
+      [chartType]="lineChartType"
+      [plugins]="lineChartPlugins"
+    >
+    </canvas>
+  </div>
+</div>

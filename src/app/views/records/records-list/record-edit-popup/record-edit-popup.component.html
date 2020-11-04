@@ -1,0 +1,221 @@
+<div *ngIf="formReady">
+  <h1 matDialogTitle>{{ data.title }}</h1>
+  <form [formGroup]="recordForm">
+    <div fxLayout="row wrap" fxLayout.lt-sm="column">
+      <div fxFlex="50" class="pr-1">
+        <mat-form-field class="full-width">
+          <input
+            type="text"
+            placeholder="Member"
+            aria-label="Member"
+            matInput
+            formControlName="member"
+            [matAutocomplete]="auto"
+          />
+          <mat-autocomplete
+            #auto="matAutocomplete"
+            [displayWith]="displayFn.bind(this)"
+          >
+            <mat-option
+              *ngFor="let member of filteredMembers | async"
+              [value]="member"
+            >
+              {{ member?.personal?.firstName }}
+              {{ member?.personal?.lastName }}
+              <span style="font-size: 12px">(id:{{ member?._id }})</span>
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+
+      <div fxFlex="50" class="pr-1">
+        <mat-form-field class="full-width">
+          <input
+            matInput
+            name="email"
+            formControlName="email"
+            placeholder="Email for record certificate (optional)"
+          />
+        </mat-form-field>
+      </div>
+
+      <div fxFlex="50" class="pr-1">
+        <mat-form-field class="full-width">
+          <input
+            matInput
+            name="meet"
+            formControlName="meet"
+            placeholder="Meet"
+            [matAutocomplete]="autoMeet"
+          />
+        </mat-form-field>
+        <mat-autocomplete #autoMeet>
+          <mat-option
+            *ngFor="let meet of filteredMeets | async"
+            [value]="meet._id"
+          >
+            <!-- {{ meet.title }} -->
+            {{ meet._id }}
+          </mat-option>
+        </mat-autocomplete>
+      </div>
+
+      <div fxFlex="50" class="pr-1">
+        <mat-form-field class="full-width">
+          <input
+            matInput
+            name="date"
+            [matDatepicker]="picker"
+            formControlName="date"
+            placeholder="Date"
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="picker"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+        <div class="pb-1">
+          <mat-form-field class="full-width">
+            <mat-label>Division</mat-label>
+            <mat-select name="division" formControlName="division">
+              <mat-option
+                *ngFor="let division of league.divisions"
+                [value]="division"
+              >
+                {{ division.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+        <div class="pb-1">
+          <mat-form-field class="full-width">
+            <mat-label>Age Class</mat-label>
+            <mat-select name="ageClass" formControlName="ageClass">
+              <mat-option
+                *ngFor="let ageClass of ageClasses"
+                [value]="ageClass"
+              >
+                {{ ageClass.min }} - {{ ageClass.max }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+        <div class="pb-1">
+          <mat-form-field class="full-width">
+            <mat-label>Gender</mat-label>
+            <mat-select name="gender" formControlName="gender">
+              <mat-option
+                *ngFor="let gender of league.genders"
+                [value]="gender"
+              >
+                {{ gender.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+        <div class="pb-1">
+          <mat-form-field class="full-width">
+            <mat-label>Weight Class</mat-label>
+            <mat-select name="weightClass" formControlName="weightClass">
+              <mat-option
+                *ngFor="let weightClass of weightClasses"
+                [value]="weightClass"
+              >
+                {{ weightClass?.name }}: {{ weightClass?.weightRange.min }} -
+                {{ weightClass?.weightRange.max }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+        <div class="pb-1">
+          <mat-form-field class="full-width">
+            <mat-label>Category</mat-label>
+            <mat-select name="category" formControlName="category">
+              <mat-option
+                *ngFor="let category of league.categories"
+                [value]="category"
+              >
+                {{ category }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+        <div class="pb-1">
+          <mat-form-field class="full-width">
+            <mat-label>Event</mat-label>
+            <mat-select name="event" formControlName="event">
+              <mat-option *ngFor="let event of league.events" [value]="event">
+                {{ event.type }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+        <div class="pb-1">
+          <mat-form-field class="full-width">
+            <mat-label>Lift</mat-label>
+            <mat-select name="lift" formControlName="lift">
+              <mat-option *ngFor="let lift of lifts" [value]="lift">
+                {{ lift }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+        <div class="pb-1">
+          <mat-form-field class="full-width">
+            <mat-label>Drug Testing</mat-label>
+            <mat-select name="test" formControlName="test">
+              <mat-option *ngFor="let test of league.tests" [value]="test.type">
+                {{ test.type }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div fxFlex="100" class="mt-1">
+        <button
+          mat-button
+          color="primary"
+          type="button"
+          (click)="submitForm()"
+        >
+          {{ "SAVE" }}
+        </button>
+        <span fxFlex></span>
+        <button
+          mat-button
+          color="warn"
+          type="button"
+          (click)="dialogRef.close(false)"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

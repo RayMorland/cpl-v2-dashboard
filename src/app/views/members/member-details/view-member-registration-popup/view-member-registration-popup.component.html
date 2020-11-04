@@ -1,0 +1,39 @@
+<div *ngIf="!loaderOpen">
+  <h2 style="font-size: 30px" class="mb-1">
+    <b>{{meet.title}} Registration</b>
+  </h2>
+  <mat-card-content>
+    <p>Created On: {{ registration.creationDate }}</p>
+    <p>Last Edited On: {{ registration.creationDate }}</p>
+    <h3>Competition Info</h3>
+    <p>Category: {{ registration.competitionInfo.category }}</p>
+    <p>Divisions: <span *ngFor="let division of registration.competitionInfo.divisions">{{ division.name }}</span></p>
+    <p>Tested: {{ registration.competitionInfo.test }}</p>
+    <p>Weight Class: {{ registration.competitionInfo.weightClass }} </p>
+    <h3>Events</h3>
+    <div *ngFor="let lift of registration.competitionInfo.lifts">
+      <p>{{ lift.type }}</p>
+    </div>
+  </mat-card-content>
+
+  <!-- Button Row -->
+  <mat-dialog-actions>
+    <button
+      mat-button
+      color="warn"
+      type="button"
+      (click)="dialogRef.close(false)"
+    >
+      Cancel
+    </button>
+  </mat-dialog-actions>
+</div>
+<div *ngIf="loaderOpen" class="spinner-wrapper" fxLayoutAlign="center center">
+  <mat-progress-spinner
+    class="example-margin"
+    [color]="warn"
+    [mode]="'indeterminate'"
+    [value]="75"
+  >
+  </mat-progress-spinner>
+</div>

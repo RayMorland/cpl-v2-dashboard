@@ -1,0 +1,12 @@
+<div *ngIf="meetReady">
+  <button mat-button [routerLink]="['/meets/' + meetId]">
+    <mat-icon>arrow_back</mat-icon> Back to Meet
+  </button>
+  <div fxLayout="row wrap">
+    <div fxFlex="100" fxFlex.gt-sm="100" fxLayout="column">
+      <mat-card class="p-0">
+          <div *ngIf="meetResults.length === 0">No Results</div>
+      </mat-card>
+    </div>
+  </div>
+</div>

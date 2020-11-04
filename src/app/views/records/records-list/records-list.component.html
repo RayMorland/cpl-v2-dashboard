@@ -1,0 +1,334 @@
+<div fxLayout="column" fxLayoutGap="20px" style="padding: 20px">
+  <!-- Search Form -->
+  <div
+    class="full-width"
+    fxLayout="row"
+    fxLayout.lt-sm="column"
+    [@animate]="{ value: '*', params: { y: '50px', delay: '100ms' } }"
+  >
+    <button mat-button color="primary" (click)="openPopUp({}, true)">
+      <mat-icon>add</mat-icon> ADD RECORD
+    </button>
+    <span fxFlex="20px"></span>
+    <!-- <button mat-button color="primary" routerLink="/records/record-groups">
+      <mat-icon>list</mat-icon> RECORD GROUPS
+    </button> -->
+  </div>
+  <!-- Records Search Container -->
+  <div
+    class="full-width"
+    fxLayout="row wrap"
+    [@animate]="{ value: '*', params: { y: '50px', delay: '150ms' } }"
+  >
+    <div fxFlex="100" fxFlex.gt-sm="100" fxLayout="column">
+      <mat-card
+        class="p-0"
+        [@animate]="{ value: '*', params: { scale: '.9', delay: '200ms' } }"
+      >
+        <mat-card-title class="">
+          <div class="card-title-text">
+            <h2>Record Search Form</h2>
+          </div>
+          <mat-divider></mat-divider>
+        </mat-card-title>
+        <mat-card-content>
+          <form [formGroup]="recordSearchForm">
+            <div fxLayout="row wrap">
+              <div fxFlex="100" class="pr-1 pt-1">
+                <div class="pb-1">
+                  <mat-slide-toggle formControlName="showActiveRecords"
+                    >Show Active Records Only</mat-slide-toggle
+                  >
+                </div>
+              </div>
+              <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                <div class="pb-1">
+                  <mat-form-field class="full-width">
+                    <mat-label>Division</mat-label>
+                    <mat-select name="division" formControlName="division">
+                      <mat-option value="all"> All Divisions </mat-option>
+                      <mat-option
+                        *ngFor="let division of divisions"
+                        [value]="division"
+                      >
+                        {{ division.name }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                <div class="pb-1">
+                  <mat-form-field class="full-width">
+                    <mat-label>Division</mat-label>
+                    <mat-select name="division" formControlName="division">
+                      <mat-option value="all"> All Divisions </mat-option>
+                      <mat-option
+                        *ngFor="let division of divisions"
+                        [value]="division"
+                      >
+                        {{ division.name }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                <div class="pb-1">
+                  <mat-form-field class="full-width">
+                    <mat-label>Category</mat-label>
+                    <mat-select name="category" formControlName="category">
+                      <mat-option value="all"> All Categories </mat-option>
+                      <mat-option
+                        *ngFor="let category of categories"
+                        [value]="category"
+                      >
+                        {{ category }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                <div class="pb-1">
+                  <mat-form-field class="full-width">
+                    <mat-label>Age Class</mat-label>
+                    <mat-select name="ageClass" formControlName="ageClass">
+                      <mat-option value="all"> All Age Classes </mat-option>
+                      <mat-option
+                        *ngFor="let ageClass of ageClasses"
+                        [value]="ageClass"
+                      >
+                        {{ ageClass.min }} - {{ ageClass.max }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                <div class="pb-1">
+                  <mat-form-field class="full-width">
+                    <mat-label>Weight Class</mat-label>
+                    <mat-select
+                      name="weightClass"
+                      formControlName="weightClass"
+                    >
+                      <mat-option value="all"> All Weight Classes </mat-option>
+                      <mat-option
+                        *ngFor="let weightClass of weightClasses"
+                        [value]="weightClass"
+                      >
+                        {{ weightClass.name }}:
+                        {{ weightClass.weightRange.min }} -
+                        {{ weightClass.weightRange.max }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                <div class="pb-1">
+                  <mat-form-field class="full-width">
+                    <mat-label>Record Type</mat-label>
+                    <mat-select name="recordType" formControlName="recordType">
+                      <mat-option value="all"> All Record Types </mat-option>
+                      <mat-option
+                        *ngFor="let recordType of recordTypes"
+                        [value]="recordType"
+                      >
+                        {{ recordType }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                <div class="pb-1">
+                  <mat-form-field class="full-width">
+                    <mat-label>Drug Testing</mat-label>
+                    <mat-select name="drugTest" formControlName="drugTest">
+                      <mat-option value="all"> All Drug Tests </mat-option>
+                      <mat-option *ngFor="let test of testing" [value]="test">
+                        {{ test.type }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                <div class="pb-1">
+                  <mat-form-field class="full-width">
+                    <mat-label>Gender</mat-label>
+                    <mat-select name="gender" formControlName="gender">
+                      <mat-option value="all"> All Genders </mat-option>
+                      <mat-option
+                        *ngFor="let gender of genders"
+                        [value]="gender"
+                      >
+                        {{ gender.name }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div fxFlex="100" fxFlex.gt-xs="50" class="pr-1">
+                <div class="pb-1">
+                  <mat-form-field class="full-width">
+                    <mat-label>Record Level</mat-label>
+                    <mat-select
+                      name="provincialOrNational"
+                      formControlName="provincialOrNational"
+                    >
+                      <mat-option value="all"> All </mat-option>
+                      <mat-option
+                        *ngFor="let option of provincialOrNational"
+                        [value]="option"
+                      >
+                        {{ option }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div
+                *ngIf="provincialOrNationalControl.value === 'Provincial'"
+                fxFlex="100"
+                fxFlex.gt-xs="50"
+                class="pr-1"
+              >
+                <div class="pb-1">
+                  <mat-form-field class="full-width">
+                    <mat-label>Province</mat-label>
+                    <mat-select name="province" formControlName="province">
+                      <mat-option value="all"> All Provinces </mat-option>
+                      <mat-option
+                        *ngFor="let province of platform.provinces"
+                        [value]="province"
+                      >
+                        {{ province }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div fxFlex="100" fxFlex.gt-xs="100" class="pr-1">
+                <div class="pb-1">
+                  <button mat-button color="primary" (click)="clearSearch()">
+                    <mat-icon>close</mat-icon> CLEAR SEARCH
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+  <!-- All Records Table -->
+  <div
+    class="full-width"
+    fxLayout="row wrap"
+    [@animate]="{ value: '*', params: { y: '50px', delay: '200ms' } }"
+  >
+    <div *ngIf="recordsListReady" fxFlex="100" fxFlex.gt-sm="100" fxLayout="column">
+      <mat-card
+        class="p-0"
+        [@animate]="{ value: '*', params: { y: '50px', delay: '300ms' } }"
+      >
+        <mat-card-content>
+          <ngx-datatable
+            *ngIf="recordsReady"
+            class="material ml-0 mr-0"
+            [rows]="filteredRecords"
+            [columnMode]="'force'"
+            [headerHeight]="50"
+            [footerHeight]="50"
+            [scrollbarH]="true"
+            [limit]="10"
+            [rowHeight]="auto"
+          >
+            <ngx-datatable-column name="Name" [flexGrow]="1">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                {{ row?.memberId?.personal?.firstName }} {{ row?.memberId?.personal?.lastName }}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Tested" [flexGrow]="1">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                {{ row?.testing }}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Division" [flexGrow]="1">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                {{ row?.division?.name }}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Age Class" [flexGrow]="1">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                {{ row?.division?.ageClass?.min }} - {{ row?.division?.ageClass?.max }}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Category" [flexGrow]="1">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                {{ row?.category }}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Record Type" [flexGrow]="1">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                {{ row?.event }} - {{ row?.lift }}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Weight" [flexGrow]="1">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                {{ row?.weight }}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Actions" [flexGrow]="1">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                <button
+                  mat-icon-button
+                  mat-sm-button
+                  color="primary"
+                  class="mr-1"
+                  (click)="openPopUp(row)"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  mat-sm-button
+                  color="warn"
+                  [disabled]="true"
+                  (click)="deleteItem(row)"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </ng-template>
+            </ngx-datatable-column>
+          </ngx-datatable>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <div
+    *ngIf="!recordsListReady"
+    class="spinner-wrapper"
+    fxLayoutAlign="center center"
+  >
+    <mat-progress-spinner
+      class="example-margin"
+      [color]="warn"
+      [mode]="'indeterminate'"
+      [value]="75"
+    >
+    </mat-progress-spinner>
+  </div>
+  </div>
+</div>
